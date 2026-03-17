@@ -12,10 +12,10 @@
     ],
     "build-depends": [],
     "provides": {
-        "LaTeX::Grammar": "lib/LaTeX/Grammar.rakumod"
+        "LaTeX::Grammar": "lib/LaTeX/Grammar.rakumod",
+        "LaTeX::Grammarish": "lib/LaTeX/Grammarish.rakumod",
+        "LaTeX::Actions::MathJSON": "lib/LaTeX/Actions/MathJSON.rakumod"
     },
-    "resources": [
-    ],
     "license": "Artistic-2.0",
     "tags": [
         "LaTeX",

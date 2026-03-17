@@ -1,191 +1,49 @@
-unit grammar LaTeX::Grammar;
+use LaTeX::Grammarish;
+use LaTeX::Actions::MathJSON;
+use JSON::Fast;
 
-rule TOP { ^ <math> $ }
+grammar LaTeX::Grammar
+        does LaTeX::Grammarish {
 
-# Skip inter-token whitespace, similar to ANTLR's WS -> skip.
-token ws { \s* }
-
-token letter { <[a..zA..Z]> }
-token digit  { <[0..9]> }
-
-token add-op { '+' | '-' }
-token mul-op { '*' | '\\times' | '\\cdot' | '/' | '\\div' | ':' }
-token rel-op { '=' | '<' | '\\leq' | '>' | '\\geq' }
-token approach-sym { '\\to' | '\\rightarrow' | '\\Rightarrow' | '\\longrightarrow' | '\\Longrightarrow' }
-
-token func-lim   { '\\lim' }
-token func-int   { '\\int' }
-token func-sum   { '\\sum' }
-token func-prod  { '\\prod' }
-
-token func-log   { '\\log' }
-token func-ln    { '\\ln' }
-token func-sin   { '\\sin' }
-token func-cos   { '\\cos' }
-token func-tan   { '\\tan' }
-token func-csc   { '\\csc' }
-token func-sec   { '\\sec' }
-token func-cot   { '\\cot' }
-
-token func-arcsin { '\\arcsin' }
-token func-arccos { '\\arccos' }
-token func-arctan { '\\arctan' }
-token func-arccsc { '\\arccsc' }
-token func-arcsec { '\\arcsec' }
-token func-arccot { '\\arccot' }
-
-token func-sinh   { '\\sinh' }
-token func-cosh   { '\\cosh' }
-token func-tanh   { '\\tanh' }
-token func-arsinh { '\\arsinh' }
-token func-arcosh { '\\arcosh' }
-token func-artanh { '\\artanh' }
-
-token func-sqrt  { '\\sqrt' }
-token cmd-frac   { '\\frac' }
-token cmd-mathit { '\\mathit' }
-
-token symbol { '\\' <[a..zA..Z]>+ }
-
-token number {
-    [ <digit>+ [ ',' <digit>**3 ]* ]
-    |
-    [ <digit>* [ ',' <digit>**3 ]* '.' <digit>+ ]
 }
 
-token differential { 'd' \s* [ <letter> | <symbol> ] }
-
-rule math     { <relation> }
-rule relation { <expr> [ <rel-op> <expr> ]* }
-rule equality { <expr> '=' <expr> }
-rule expr     { <additive> }
-
-rule additive { <mp> [ <add-op> <mp> ]* }
-rule mp       { <unary> [ <mul-op> <unary> ]* }
-rule mp-nofunc { <unary-nofunc> [ <mul-op> <unary-nofunc> ]* }
-
-rule unary        { <add-op>* <postfix>+ }
-rule unary-nofunc { <add-op>* <postfix> <postfix-nofunc>* }
-
-rule postfix         { <exp> <postfix-op>* }
-rule postfix-nofunc  { <exp-nofunc> <postfix-op>* }
-rule postfix-op      { '!' | <eval-at> }
-
-rule eval-at { '|'
-    [ <eval-at-sup> | <eval-at-sub> | <eval-at-sup> <eval-at-sub> ]
+#-----------------------------------------------------------
+our sub latex-subparse(Str:D $command, Str:D :$rule = 'TOP') is export {
+    LaTeX::Grammar.subparse($command, :$rule);
 }
 
-rule eval-at-sub { '_' '{' [ <expr> | <equality> ] '}' }
-rule eval-at-sup { '^' '{' [ <expr> | <equality> ] '}' }
-
-rule exp {
-    <comp>
-    [ '^' [ <atom> | '{' <expr> '}' ] <subexpr>? ]*
+our sub latex-parse(Str:D $command, Str:D :$rule = 'TOP') is export {
+    LaTeX::Grammar.parse($command, :$rule);
 }
 
-rule exp-nofunc {
-    <comp-nofunc>
-    [ '^' [ <atom> | '{' <expr> '}' ] <subexpr>? ]*
+our sub latex-interpret(Str:D $command,
+                        Str:D :$rule = 'TOP',
+                        :t(:to(:a(:$actions))) is copy = LaTeX::Actions::MathJSON.new,
+                        :$format is copy = Whatever;
+                        ) is export {
+    # Choose actions class
+    $actions = do given $actions {
+        when Whatever {
+            LaTeX::Actions::MathJSON.new
+        }
+#        when $_ ~~ Str:D && $_.lc ∈ ["mathematica", "wl", "wolfram language"] {
+#            MermaidJS::Actions::WL::Graph.new
+#        }
+        when $_ ~~ Str:D && $_.lc ∈ <math-json mathjson json> {
+            LaTeX::Actions::MathJSON.new
+        }
+#        when $_ ~~ Str:D && $_.lc ∈ <raku perl6> {
+#            MermaidJS::Actions::Raku.new
+#        }
+        default {
+            $actions
+        }
+    }
+
+    # Format
+    if $format.isa(Whatever) { $format = $actions ~~ LaTeX::Actions::MathJSON ?? 'json' !! 'raku' }
+
+    # Result
+    my $res = LaTeX::Grammar.parse($command, :$rule, :$actions).made;
+    return $format ~~ Str:D && $format.lc eq 'json' ?? to-json($res, :!pretty) !! $res;
 }
-
-rule comp {
-    <group>
-    | <abs-group>
-    | <func>
-    | <atom>
-    | <frac>
-}
-
-rule comp-nofunc {
-    <group>
-    | <abs-group>
-    | <atom>
-    | <frac>
-}
-
-rule group {
-    '(' <expr> ')'
-    | '[' <expr> ']'
-    | '{' <expr> '}'
-}
-
-rule abs-group { '|' <expr> '|' }
-
-rule atom {
-    [ <letter> | <symbol> ] <subexpr>?
-    | <number>
-    | <differential>
-    | <mathit>
-}
-
-rule mathit      { <cmd-mathit> '{' <mathit-text> '}' }
-token mathit-text { <letter>* }
-
-rule frac {
-    <cmd-frac> '{' <expr> '}' '{' <expr> '}'
-}
-
-token func-normal {
-    <func-log> | <func-ln>
-    | <func-sin> | <func-cos> | <func-tan>
-    | <func-csc> | <func-sec> | <func-cot>
-    | <func-arcsin> | <func-arccos> | <func-arctan>
-    | <func-arccsc> | <func-arcsec> | <func-arccot>
-    | <func-sinh> | <func-cosh> | <func-tanh>
-    | <func-arsinh> | <func-arcosh> | <func-artanh>
-}
-
-rule func {
-    [
-        <func-normal>
-        [ <subexpr>? <supexpr>? | <supexpr>? <subexpr>? ]
-        [ '(' <func-arg> ')' | <func-arg-noparens> ]
-    ]
-    |
-    [
-        [ <letter> | <symbol> ] <subexpr>?
-        '(' <args> ')'
-    ]
-    |
-    [
-        <func-int>
-        [ <subexpr> <supexpr> | <supexpr> <subexpr> ]?
-        [ <additive>? <differential> | <frac> | <additive> ]
-    ]
-    |
-    [
-        <func-sqrt>
-        [ '[' <expr> ']' ]?
-        '{' <expr> '}'
-    ]
-    |
-    [
-        [ <func-sum> | <func-prod> ]
-        [ <subeq> <supexpr> | <supexpr> <subeq> ]
-        <mp>
-    ]
-    |
-    [
-        <func-lim> <limit-sub> <mp>
-    ]
-}
-
-rule args { <expr> [ ',' <expr> ]* }
-
-rule limit-sub {
-    '_' '{'
-    [ <letter> | <symbol> ]
-    <approach-sym>
-    <expr>
-    [ '^' '{' <add-op> '}' ]?
-    '}'
-}
-
-rule func-arg         { <expr> [ ',' <expr> ]* }
-rule func-arg-noparens { <mp-nofunc> }
-
-rule subexpr { '_' [ <atom> | '{' <expr> '}' ] }
-rule supexpr { '^' [ <atom> | '{' <expr> '}' ] }
-
-rule subeq { '_' '{' <equality> '}' }
-rule supeq { '_' '{' <equality> '}' }

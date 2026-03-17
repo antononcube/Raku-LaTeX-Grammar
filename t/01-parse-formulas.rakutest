@@ -18,7 +18,7 @@ my @complex = (
     '\\lim_{x\\to0} \\frac{\\sin(x)}{x}',
 );
 
-plan @simple.elems + @complex.elems;
+plan *;
 
 for @simple -> $formula {
     ok LaTeX::Grammar.parse($formula), "parses simple formula: $formula";
@@ -27,3 +27,5 @@ for @simple -> $formula {
 for @complex -> $formula {
     ok LaTeX::Grammar.parse($formula), "parses complex formula: $formula";
 }
+
+done-testing;

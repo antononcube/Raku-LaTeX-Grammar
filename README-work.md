@@ -21,6 +21,3 @@ use LaTeX::Grammar;
 
 latex-interpret('\frac{1}{x}=\sqrt{y}')
 ```
-```
-# ["Equal",["Divide",1,"x"],["Root","y",2]]
-```

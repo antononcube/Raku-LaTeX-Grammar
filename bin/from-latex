@@ -1,0 +1,40 @@
+#!/usr/bin/env raku
+use v6.d;
+
+use LaTeX::Grammar;
+
+my %*SUB-MAIN-OPTS = :named-anywhere;
+
+#-----------------------------------------------------------
+
+#| Converts LaTeX code or files into MathJSON, Mathematica, or Raku files.
+sub MAIN(Str $text is copy,             #= Input file or LaTeX spec.
+         Str :t(:$to) = 'Whatever',     #= Language to translate to. (One of 'mathjson', 'mathematica', 'raku', or 'Whatever'.)
+         Str :f(:$format) = 'Whatever', #= Format to of the result.
+         Str :o(:$output) = '',         #= Output file; if an empty string then the result is printed to stdout.
+         ) {
+
+    $text = slurp($text) if $text.IO.f;
+
+    my $toSpec = $to;
+    if !$to || $to.lc ∈ <whatever automatic> {
+        $toSpec = do given $output {
+            when !$_.chars { 'json' }
+            when $_ ~~ / '.wl' | '.m' / { 'mathematica' }
+            when $_ ~~ / '.json' / { 'mathjson' }
+            when $_ ~~ / '.raku' | '.rakumod' | '.p6' | '.pm6' / { 'raku' }
+            default {
+                note 'Cannot automatically determine the format to convert to.';
+                'mathjson'
+            }
+        }
+    }
+
+    my $res = latex-interpret($text, format => ($format.lc eq 'whatever' ?? Whatever !! $format), actions => $toSpec);
+
+    if $output.chars > 0 {
+        spurt($output, $res);
+    } else {
+        say $res;
+    }
+}
