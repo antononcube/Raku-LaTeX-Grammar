@@ -1,0 +1,29 @@
+{
+    "name": "LaTeX::Grammar",
+    "description": "LaTeX grammar and related interpreters (actions.)",
+    "version": "0.0.1",
+    "raku": "v6.d",
+    "authors": [
+        "Anton Antonov"
+    ],
+    "auth": "zef:antononcube",
+    "depends": [
+        "JSON::Fast:ver<0.19+>"
+    ],
+    "build-depends": [],
+    "provides": {
+        "LaTeX::Grammar": "lib/LaTeX/Grammar.rakumod"
+    },
+    "resources": [
+    ],
+    "license": "Artistic-2.0",
+    "tags": [
+        "LaTeX",
+        "MathJSON",
+        "TeX",
+        "grammar",
+        "parser"
+    ],
+    "api": "0",
+    "source-url": "https://github.com/antononcube/Raku-LaTeX-Grammar.git"
+}

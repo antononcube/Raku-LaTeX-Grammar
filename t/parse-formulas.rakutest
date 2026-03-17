@@ -1,0 +1,29 @@
+use v6;
+use Test;
+
+use LaTeX::Grammar;
+
+my @simple = (
+    'x+1',
+    'a-b',
+    '\\frac{1}{2}',
+    '\\sqrt{x}',
+    '\\sin(x)',
+    'x^2+y_1',
+);
+
+my @complex = (
+    '\\int_{0}^{1} x^2 d x',
+    '\\sum_{n=1}^{10} n^2',
+    '\\lim_{x\\to0} \\frac{\\sin(x)}{x}',
+);
+
+plan @simple.elems + @complex.elems;
+
+for @simple -> $formula {
+    ok LaTeX::Grammar.parse($formula), "parses simple formula: $formula";
+}
+
+for @complex -> $formula {
+    ok LaTeX::Grammar.parse($formula), "parses complex formula: $formula";
+}
