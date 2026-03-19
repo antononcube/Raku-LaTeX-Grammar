@@ -1,7 +1,7 @@
 {
     "name": "LaTeX::Grammar",
     "description": "LaTeX grammar and related interpreters (actions.)",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "raku": "v6.d",
     "authors": [
         "Anton Antonov"
@@ -14,7 +14,8 @@
     "provides": {
         "LaTeX::Grammar": "lib/LaTeX/Grammar.rakumod",
         "LaTeX::Grammarish": "lib/LaTeX/Grammarish.rakumod",
-        "LaTeX::Actions::MathJSON": "lib/LaTeX/Actions/MathJSON.rakumod"
+        "LaTeX::Actions::MathJSON": "lib/LaTeX/Actions/MathJSON.rakumod",
+        "LaTeX::Actions::MathML": "lib/LaTeX/Actions/MathML.rakumod"
     },
     "license": "Artistic-2.0",
     "tags": [
