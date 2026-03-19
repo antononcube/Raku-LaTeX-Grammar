@@ -9,7 +9,7 @@ my %*SUB-MAIN-OPTS = :named-anywhere;
 
 #| Converts LaTeX code or files into MathJSON, Mathematica, or Raku files.
 sub MAIN(Str $text is copy,             #= Input file or LaTeX spec.
-         Str :t(:$to) = 'Whatever',     #= Language to translate to. (One of 'mathjson', 'mathematica', 'raku', or 'Whatever'.)
+         Str :t(:$to) = 'Whatever',     #= Language to translate to. (One of 'mathjson', 'mathml', 'mathematica', 'raku', or 'Whatever'.)
          Str :f(:$format) = 'Whatever', #= Format to of the result.
          Str :o(:$output) = '',         #= Output file; if an empty string then the result is printed to stdout.
          ) {
