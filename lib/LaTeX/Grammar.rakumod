@@ -1,5 +1,6 @@
 use LaTeX::Grammarish;
 use LaTeX::Actions::MathJSON;
+use LaTeX::Actions::MathML;
 use JSON::Fast;
 
 grammar LaTeX::Grammar
@@ -31,6 +32,9 @@ our sub latex-interpret(Str:D $command,
 #        }
         when $_ ~~ Str:D && $_.lc ∈ <math-json mathjson json> {
             LaTeX::Actions::MathJSON.new
+        }
+        when $_ ~~ Str:D && $_.lc ∈ <math-ml mathml mml xml> {
+            LaTeX::Actions::MathML.new
         }
 #        when $_ ~~ Str:D && $_.lc ∈ <raku perl6> {
 #            MermaidJS::Actions::Raku.new
