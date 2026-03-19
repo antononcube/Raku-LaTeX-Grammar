@@ -27,7 +27,7 @@ our sub latex-interpret(Str:D $command,
         when Whatever {
             LaTeX::Actions::MathJSON.new
         }
-#        when $_ ~~ Str:D && $_.lc ∈ ["mathematica", "wl", "wolfram language"] {
+#        when $_ ~~ Str:D && $_.lc ∈ ["mathematica", "wl", "wolfram", "wolfram language"] {
 #            MermaidJS::Actions::WL::Graph.new
 #        }
         when $_ ~~ Str:D && $_.lc ∈ <math-json mathjson json> {
