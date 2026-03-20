@@ -1,0 +1,36 @@
+use v6;
+use Test;
+
+use LaTeX::Grammar;
+
+my @simple = (
+    [ 'x+1', 'Plus[x,1]' ],
+    [ 'a-b', 'Plus[a,Times[-1,b]]' ],
+    [ 'a * ( b + c)', 'Times[a,Plus[b,c]]' ],
+    [ '\\frac{1}{2}', 'Rational[1,2]' ],
+    [ '\\sqrt{x}', 'Sqrt[x]' ],
+    [ '\\sin(x)', 'Sin[x]' ],
+    [ 'x^2+y_1', 'Plus[Power[x,2],Subscript[y,1]]' ],
+);
+
+my @complex = (
+    '\\int_{0}^{1} x^2 d x',
+    '\\sum_{n=1}^{10} n^2',
+    '\\lim_{x\\to0} \\frac{\\sin(x)}{x}',
+);
+
+plan *;
+
+for @simple -> ($formula, $expected) {
+    my $res = latex-interpret($formula, actions => 'wl', format => 'raku');
+    ok $res.defined, "interprets simple formula: $formula";
+    is $res, $expected, "WL shape for: $formula";
+}
+
+for @complex -> $formula {
+    my $res = latex-interpret($formula, actions => 'wl', format => 'raku');
+    ok $res.defined, "interprets complex formula: $formula";
+    ok $res.chars > 0, "returns WL text for: $formula";
+}
+
+done-testing;
