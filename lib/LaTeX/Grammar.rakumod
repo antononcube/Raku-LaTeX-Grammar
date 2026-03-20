@@ -1,6 +1,8 @@
 use LaTeX::Grammarish;
 use LaTeX::Actions::MathJSON;
 use LaTeX::Actions::MathML;
+use LaTeX::Actions::AsciiMath;
+use LaTeX::Actions::WL;
 use JSON::Fast;
 
 grammar LaTeX::Grammar
@@ -35,6 +37,12 @@ our sub latex-interpret(Str:D $command,
         }
         when $_ ~~ Str:D && $_.lc ∈ <math-ml mathml mml xml> {
             LaTeX::Actions::MathML.new
+        }
+        when $_ ~~ Str:D && $_.lc ∈ <ascii-math asciimath am> {
+            LaTeX::Actions::AsciiMath.new
+        }
+        when $_ ~~ Str:D && $_.lc ∈ <wl wolfram mathematica wolfram-language> {
+            LaTeX::Actions::WL.new
         }
 #        when $_ ~~ Str:D && $_.lc ∈ <raku perl6> {
 #            MermaidJS::Actions::Raku.new
