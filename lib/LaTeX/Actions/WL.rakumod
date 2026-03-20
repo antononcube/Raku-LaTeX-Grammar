@@ -4,16 +4,14 @@ use LaTeX::Actions::MathJSON;
 
 class LaTeX::Actions::WL {
 
-    my constant %BIN-OPS = (
-        Add => '+',
-        Subtract => '-',
-        Multiply => '*',
-        Divide => '/',
-        Equal => '==',
-        Less => '<',
-        Greater => '>',
-        LessEqual => '<=',
-        GreaterEqual => '>=',
+    my constant %BIN-FUNC = (
+        Add => 'Plus',
+        Multiply => 'Times',
+        Equal => 'Equal',
+        Less => 'Less',
+        Greater => 'Greater',
+        LessEqual => 'LessEqual',
+        GreaterEqual => 'GreaterEqual',
     );
 
     my constant %FUNC-MAP = (
@@ -54,15 +52,18 @@ class LaTeX::Actions::WL {
 
         my $head = $x[0];
 
-        if $head ~~ Str && %BIN-OPS{$head}.defined && $x.elems >= 3 {
-            my $lhs = self!wrap-term($x[1]);
-            my $rhs = self!wrap-term($x[2]);
-            return "$lhs" ~ %BIN-OPS{$head} ~ "$rhs";
+        if $head ~~ Str && $x.elems >= 3 {
+            my $lhs = self!node($x[1]);
+            my $rhs = self!node($x[2]);
+
+            return %BIN-FUNC{$head} ~ '[' ~ $lhs ~ ',' ~ $rhs ~ ']' if %BIN-FUNC{$head}.defined;
+            return 'Plus[' ~ $lhs ~ ',Times[-1,' ~ $rhs ~ ']]' if $head eq 'Subtract';
+            return 'Rational[' ~ $lhs ~ ',' ~ $rhs ~ ']' if $head eq 'Divide';
         }
 
         given $head {
             when 'Power' {
-                return self!wrap-term($x[1]) ~ '^' ~ self!wrap-power($x[2]);
+                return 'Power[' ~ self!node($x[1]) ~ ',' ~ self!node($x[2]) ~ ']';
             }
             when 'Subscript' {
                 return 'Subscript[' ~ self!node($x[1]) ~ ',' ~ self!node($x[2]) ~ ']';
@@ -75,10 +76,10 @@ class LaTeX::Actions::WL {
                     !! 'Surd[' ~ $radicand ~ ',' ~ self!node($deg) ~ ']';
             }
             when 'Negate' {
-                return '-' ~ self!wrap-term($x[1]);
+                return 'Times[-1,' ~ self!node($x[1]) ~ ']';
             }
             when 'Factorial' {
-                return self!wrap-term($x[1]) ~ '!';
+                return 'Factorial[' ~ self!node($x[1]) ~ ']';
             }
             when 'Abs' {
                 return 'Abs[' ~ self!node($x[1]) ~ ']';
@@ -162,15 +163,4 @@ class LaTeX::Actions::WL {
         'Limit[' ~ $body ~ ',' ~ self!node($spec) ~ ']';
     }
 
-    method !wrap-term($x) {
-        my $s = self!node($x);
-        my $needs = $x ~~ Positional && $x.elems > 0 && $x[0] ~~ Str && $x[0] eq any(<Add Subtract Equal Less Greater LessEqual GreaterEqual>);
-        $needs ?? '(' ~ $s ~ ')' !! $s;
-    }
-
-    method !wrap-power($x) {
-        my $s = self!node($x);
-        my $simple = $x ~~ Str || $x ~~ Int || $x ~~ Rat || $x ~~ Num;
-        $simple ?? $s !! '(' ~ $s ~ ')';
-    }
 }
