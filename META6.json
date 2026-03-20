@@ -14,14 +14,20 @@
     "provides": {
         "LaTeX::Grammar": "lib/LaTeX/Grammar.rakumod",
         "LaTeX::Grammarish": "lib/LaTeX/Grammarish.rakumod",
+        "LaTeX::Actions::AsciiMath": "lib/LaTeX/Actions/AsciiMath.rakumod",
         "LaTeX::Actions::MathJSON": "lib/LaTeX/Actions/MathJSON.rakumod",
-        "LaTeX::Actions::MathML": "lib/LaTeX/Actions/MathML.rakumod"
+        "LaTeX::Actions::MathML": "lib/LaTeX/Actions/MathML.rakumod",
+        "LaTeX::Actions::WL": "lib/LaTeX/Actions/WL.rakumod"
     },
     "license": "Artistic-2.0",
     "tags": [
+        "AsciiMath",
         "LaTeX",
         "MathJSON",
+        "MathML",
+        "Mathematica",
         "TeX",
+        "Wolfram Language",
         "grammar",
         "parser"
     ],
