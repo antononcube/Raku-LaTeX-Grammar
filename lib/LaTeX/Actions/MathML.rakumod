@@ -1,8 +1,9 @@
 use v6.d;
 
 use LaTeX::Actions::MathJSON;
+use LaTeX::Actions::MathJSON-ad-hoc;
 
-class LaTeX::Actions::MathML {
+class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
 
     my constant %BIN-OPS = (
         Add => '+',
@@ -17,22 +18,20 @@ class LaTeX::Actions::MathML {
     );
 
     method TOP($/) {
-        my $mathjson-actions = LaTeX::Actions::MathJSON.new;
-        $mathjson-actions.TOP($/);
-        my $ast = $/.made;
+        my $ast = LaTeX::Actions::MathJSON.TOP($/);
 
         make '<math xmlns="http://www.w3.org/1998/Math/MathML">' ~ self!node($ast) ~ '</math>';
     }
 
     method !node($x) {
-        return self!mn($x) if $x ~~ Int || $x ~~ Rat || $x ~~ Num;
-        return self!mi($x) if $x ~~ Str;
+        return self!mn($x) if $x ~~ Numeric:D; # $x ~~ Int:D || $x ~~ Rat:D || $x ~~ Num;
+        return self!mi($x) if $x ~~ Str:D;
 
         return '<mtext></mtext>' unless $x ~~ Positional && $x.elems > 0;
 
         my $head = $x[0];
 
-        if $head ~~ Str && %BIN-OPS{$head}.defined && $x.elems >= 3 {
+        if $head ~~ Str:D && %BIN-OPS{$head}.defined && $x.elems >= 3 {
             return self!mrow(self!node($x[1]), self!mo(%BIN-OPS{$head}), self!node($x[2]));
         }
 
