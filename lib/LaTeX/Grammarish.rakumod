@@ -135,8 +135,12 @@ role LaTeX::Grammarish {
 
     rule expr-integral {
         <func-int>
-            [ <subexpr> <supexpr> | <supexpr> <subexpr> ]?
-            [ <additive>? <differential> | <frac> | <additive> ]
+            [ <subexpr> <supexpr>? | <supexpr> <subexpr>? ]?
+            [
+                | <additive>? <differential>
+                | <frac>
+                | <additive>
+            ]
     }
 
     rule expr-sqrt {
@@ -171,11 +175,11 @@ role LaTeX::Grammarish {
             || <func-normal-short>
             || <func-letter-symbol>
         ]
-        | <func-normal-full>
         | <expr-integral>
+        | <func-normal-full>
         | <expr-sqrt>
-        | <expr-sum-prod>
         | <expr-limit>
+        | <expr-sum-prod>
     }
 
     rule args { <expr> [ ',' <expr> ]* }

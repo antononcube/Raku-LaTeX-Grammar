@@ -297,8 +297,8 @@ class LaTeX::Actions::MathJSON {
     }
 
     method expr-integral($/) {
-        my $lower = $<subexpr> ?? $<subexpr>.made !! Any;
-        my $upper = $<supexpr> ?? $<supexpr>.made !! Any;
+        my $lower = $<subexpr> ?? $<subexpr>.made !! 'Nothing';
+        my $upper = $<supexpr> ?? $<supexpr>.made !! 'Nothing';
 
         my $integrand = do if $<frac> {
             $<frac>.made;
@@ -309,6 +309,19 @@ class LaTeX::Actions::MathJSON {
         };
 
         my $var = $<differential> ?? $<differential>.made.tail !! Any;
+
+        if $integrand ~~ Positional:D && $integrand.tail ~~ (Array:D | List:D) && $integrand.tail.head eq 'DifferentialD' {
+            $var = $integrand.tail.tail;
+            $integrand = $integrand.head(*-1).Array;
+            if $integrand.head eq 'Multiply' && $integrand.elems == 2 {
+                # The integrand now has the form like ['Multiply', 'x']
+                $integrand .= tail
+            }
+        }
+
+        if $lower ne 'Nothing' && $upper ne 'Nothing' && $var {
+            $integrand = ['Function', ['Block', $integrand], $var]
+        }
 
         make [ 'Integrate', $integrand, [ 'Limits', $var, $lower, $upper ] ];
     }
