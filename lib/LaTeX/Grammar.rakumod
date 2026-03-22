@@ -1,5 +1,6 @@
 use LaTeX::Grammarish;
 use LaTeX::Actions::MathJSON;
+use LaTeX::Actions::MathJSON-ad-hoc;
 use LaTeX::Actions::MathML;
 use LaTeX::Actions::AsciiMath;
 use LaTeX::Actions::WL;

@@ -16,6 +16,7 @@
         "LaTeX::Grammarish": "lib/LaTeX/Grammarish.rakumod",
         "LaTeX::Actions::AsciiMath": "lib/LaTeX/Actions/AsciiMath.rakumod",
         "LaTeX::Actions::MathJSON": "lib/LaTeX/Actions/MathJSON.rakumod",
+        "LaTeX::Actions::MathJSON-ad-hoc": "lib/LaTeX/Actions/MathJSON-ad-hoc.rakumod",
         "LaTeX::Actions::MathML": "lib/LaTeX/Actions/MathML.rakumod",
         "LaTeX::Actions::WL": "lib/LaTeX/Actions/WL.rakumod"
     },
