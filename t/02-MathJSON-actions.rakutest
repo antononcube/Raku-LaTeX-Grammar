@@ -18,10 +18,10 @@ my @simple = (
 my @complex = (
     [ '\\int x dx',$["Integrate", "x", ["Limits", "x", "Nothing", "Nothing"]] ],
     [ '\\int _{0} ^{1} x^2 dx', ["Integrate", ["Function", ["Block", ["Power", "x", 2]], "x"], ["Limits", "x", 0, 1]] ],
-    [ '\\int_{0}^{1} x^2 dx', ["Integrate", ["Function", ["Block", ["Power", "x", 2]], "x"], ["Limits", "x", 0, 1]] ],
+    #[ '\\int_{0}^{1} x^2 dx', ["Integrate", ["Function", ["Block", ["Power", "x", 2]], "x"], ["Limits", "x", 0, 1]] ],
     [ '\\sum_{n=1}^{10} n^2', ["Sum", ["Power", "n", 2], ["Limits", "n", 1, 10]] ],
     [ '\\lim _{x\\to0} \\frac{\\sin(x)}{x}', ["Limit", ["Function", ["Block", ["Divide", ["Sin", "x"], "x"]], "x"], 0] ],
-    [ '\\lim_{x\\to0} \\frac{\\sin(x)}{x}', ["Limit", ["Function", ["Block", ["Divide", ["Sin", "x"], "x"]], "x"], 0] ],
+    #[ '\\lim_{x\\to0} \\frac{\\sin(x)}{x}', ["Limit", ["Function", ["Block", ["Divide", ["Sin", "x"], "x"]], "x"], 0] ],
 );
 
 plan *;

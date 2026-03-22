@@ -4,6 +4,7 @@ use Test;
 use LaTeX::Grammar;
 
 my @simple = (
+    [ 'x', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math>' ],
     [ 'x+1', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow></math>' ],
     [ 'a-b', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>-</mo><mi>b</mi></mrow></math>' ],
     [ '\\frac{1}{2}', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>1</mn><mo>/</mo><mn>2</mn></mrow></math>' ],
