@@ -2,7 +2,7 @@ use v6.d;
 
 use JSON::Fast;
 
-class LaTeX::Actions::MathJSON {
+class LaTeX::Actions::MathJSON-ad-hoc {
 
     my constant @REL-OPS = <\\leq \\geq = < >>;
     my constant @ADD-OPS = <+ ->;
