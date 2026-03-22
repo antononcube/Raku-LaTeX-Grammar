@@ -27,6 +27,24 @@ latex-interpret('\frac{1}{x}=\sqrt{y}')
 
 -----
 
+## CLI
+
+The package provides Command Line Interface (CLI) script. Here is usage message:
+
+```shell
+from-latex --help
+```
+```
+# Usage:
+#   from-latex <text> [-t|--format|--to=<Str>] [-o|--output=<Str>] -- Converts LaTeX code or files into AsciiMath, MathJSON, MathML, Mathematica, or Raku files.
+#   
+#     <text>                    Input file or LaTeX spec.
+#     -t|--format|--to=<Str>    Language to translate to. (One of 'asciimath', 'mathjson', 'mathml', 'mathematica', 'raku', or 'Whatever'.) [default: 'Whatever']
+#     -o|--output=<Str>         Output file; if an empty string then the result is printed to stdout. [default: '']
+```
+
+-----
+
 ## TODO
 
 - [ ] TODO Development

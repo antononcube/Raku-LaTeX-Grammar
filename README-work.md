@@ -24,6 +24,16 @@ latex-interpret('\frac{1}{x}=\sqrt{y}')
 
 -----
 
+## CLI
+
+The package provides Command Line Interface (CLI) script. Here is usage message:
+
+```shell
+from-latex --help
+```
+
+-----
+
 ## TODO
 
 - [ ] TODO Development
