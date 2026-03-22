@@ -133,6 +133,24 @@ role LaTeX::Grammarish {
         | <func-arsinh> | <func-arcosh> | <func-artanh>
     }
 
+    rule expr-integral {
+        <func-int>
+            [ <subexpr> <supexpr> | <supexpr> <subexpr> ]?
+            [ <additive>? <differential> | <frac> | <additive> ]
+    }
+
+    rule expr-sqrt {
+        <func-sqrt> [ '[' <expr> ']' ]? '{' <expr> '}'
+    }
+
+    rule expr-sum-prod {
+        [ <func-sum> | <func-prod> ]
+        [ <subeq> <supexpr> | <supexpr> <subeq> ]
+        <mp>
+    }
+
+    rule expr-limit { <func-lim> <limit-sub> <mp> }
+
     rule func {
         [
         <func-normal>
@@ -144,28 +162,10 @@ role LaTeX::Grammarish {
             [ <letter> | <symbol> ] <subexpr>?
             '(' <args> ')'
         ]
-        |
-        [
-        <func-int>
-        [ <subexpr> <supexpr> | <supexpr> <subexpr> ]?
-        [ <additive>? <differential> | <frac> | <additive> ]
-        ]
-        |
-        [
-        <func-sqrt>
-        [ '[' <expr> ']' ]?
-            '{' <expr> '}'
-        ]
-        |
-        [
-        [ <func-sum> | <func-prod> ]
-        [ <subeq> <supexpr> | <supexpr> <subeq> ]
-        <mp>
-    ]
-        |
-        [
-        <func-lim> <limit-sub> <mp>
-    ]
+        | <expr-integral>
+        | <expr-sqrt>
+        | <expr-sum-prod>
+        | <expr-limit>
     }
 
     rule args { <expr> [ ',' <expr> ]* }
