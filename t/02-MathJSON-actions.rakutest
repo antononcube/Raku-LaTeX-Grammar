@@ -8,14 +8,20 @@ my @simple = (
     [ 'a-b', [ 'Subtract', 'a', 'b' ] ],
     [ '\\frac{1}{2}', [ 'Divide', 1, 2 ] ],
     [ '\\sqrt{x}', [ 'Root', 'x', 2 ] ],
+    [ '\\sin{x}', [ 'Sin', 'x' ] ],
+    [ '\\sin^2{x}', ["Power", ["Sin", "x"], 2] ],
     [ '\\sin(x)', [ 'Sin', 'x' ] ],
+    [ '\\sin (x)', [ 'Sin', 'x' ] ],
     [ 'x^2+y_1', [ 'Add', [ 'Power', 'x', 2 ], [ 'Subscript', 'y', 1 ] ] ],
 );
 
 my @complex = (
-    '\\int_{0}^{1} x^2 d x',
-    '\\sum_{n=1}^{10} n^2',
-    '\\lim_{x\\to0} \\frac{\\sin(x)}{x}',
+    [ '\\int x dx',$["Integrate", "x", ["Limits", "x", "Nothing", "Nothing"]] ],
+    [ '\\int _{0} ^{1} x^2 dx', ["Integrate", ["Function", ["Block", ["Power", "x", 2]], "x"], ["Limits", "x", 0, 1]] ],
+    [ '\\int_{0}^{1} x^2 dx', ["Integrate", ["Function", ["Block", ["Power", "x", 2]], "x"], ["Limits", "x", 0, 1]] ],
+    [ '\\sum_{n=1}^{10} n^2', ["Sum", ["Power", "n", 2], ["Limits", "n", 1, 10]] ],
+    [ '\\lim _{x\\to0} \\frac{\\sin(x)}{x}', ["Limit", ["Function", ["Block", ["Divide", ["Sin", "x"], "x"]], "x"], 0] ],
+    [ '\\lim_{x\\to0} \\frac{\\sin(x)}{x}', ["Limit", ["Function", ["Block", ["Divide", ["Sin", "x"], "x"]], "x"], 0] ],
 );
 
 plan *;
@@ -26,9 +32,10 @@ for @simple -> ($formula, $expected) {
     is-deeply $res, $expected, "MathJSON shape for: $formula";
 }
 
-for @complex -> $formula {
+for @complex -> ($formula, $expected) {
     my $res = latex-interpret($formula, format => 'raku');
     ok $res.defined, "interprets complex formula: $formula";
+    is-deeply $res, $expected, "MathJSON shape for: $formula";
 }
 
 done-testing;
