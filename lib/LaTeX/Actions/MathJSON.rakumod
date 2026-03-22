@@ -349,7 +349,9 @@ class LaTeX::Actions::MathJSON {
     }
 
     method expr-limit($/) {
-        make [ 'Limit', $<mp>.made, $<limit-sub>.made ];
+        # Elegant and "proper", but CortexJS gives (or prefers) function block format
+        #make [ 'Limit', $<mp>.made, $<limit-sub>.made ];
+        make [ 'Limit', ['Function', ['Block', $<mp>.made], $<limit-sub>.made[1]], $<limit-sub>.made[2] ];
     }
 
     method func-normal-short($/) {
