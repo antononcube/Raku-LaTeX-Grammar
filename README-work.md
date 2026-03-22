@@ -21,3 +21,27 @@ use LaTeX::Grammar;
 
 latex-interpret('\frac{1}{x}=\sqrt{y}')
 ```
+
+-----
+
+## TODO
+
+- [ ] TODO Development
+  - [X] DONE Core grammar
+  - [ ] TODO MathJSON actions
+    - First, reasonably well working version.
+    - Some cases to do not work.
+      - I assume because of the rule-based grammar.
+        - Should have been regex-based
+    - The generated MathJSON is CortexJS-style, but a simpler version might be better.
+      - For example, 
+        - LaTeX: `\int_{0}^{1}x^{2}dx`
+        - CortexJS: `["Integrate",["Function",["Block",["Power","x",2]],"x"],["Limits","x",0,1]]`
+        - Simpler: `["Integrate",["Power","x",2],["Limits","x",0,1]]`
+  - [X] DONE MathML actions
+    - Based on MathJSON.
+  - [X] DONE AsciiMath actions
+    - Based on MathJSON.
+  - [X] DONE Wolfram Language (WL) actions
+    - Based on MathJSON.
+
