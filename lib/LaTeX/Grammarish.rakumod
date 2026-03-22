@@ -87,7 +87,7 @@ role LaTeX::Grammarish {
     rule exp-nofunc { <comp-nofunc> [ '^' [ <atom> | '{' <expr> '}' ] <subexpr>? ]* }
 
     rule comp {
-        <group>
+        | <group>
         | <abs-group>
         | <func>
         | <atom>
@@ -95,14 +95,14 @@ role LaTeX::Grammarish {
     }
 
     rule comp-nofunc {
-            <group>
+        | <group>
         | <abs-group>
         | <atom>
         | <frac>
     }
 
     rule group {
-            '(' <expr> ')'
+        | '(' <expr> ')'
         | '[' <expr> ']'
         | '{' <expr> '}'
     }
@@ -110,7 +110,7 @@ role LaTeX::Grammarish {
     rule abs-group { '|' <expr> '|' }
 
     rule atom {
-            [ <letter> | <symbol> ] <subexpr>?
+        | [ <letter> | <symbol> ] <subexpr>?
         | <number>
         | <differential>
         | <mathit>
@@ -121,16 +121,6 @@ role LaTeX::Grammarish {
 
     rule frac {
         <cmd-frac> '{' <expr> '}' '{' <expr> '}'
-    }
-
-    token func-normal {
-        <func-log> | <func-ln>
-        | <func-sin> | <func-cos> | <func-tan>
-        | <func-csc> | <func-sec> | <func-cot>
-        | <func-arcsin> | <func-arccos> | <func-arctan>
-        | <func-arccsc> | <func-arcsec> | <func-arccot>
-        | <func-sinh> | <func-cosh> | <func-tanh>
-        | <func-arsinh> | <func-arcosh> | <func-artanh>
     }
 
     rule expr-integral {
@@ -154,6 +144,16 @@ role LaTeX::Grammarish {
     }
 
     rule expr-limit { <func-lim> <limit-sub> <mp> }
+
+    token func-normal {
+        | <func-log> | <func-ln>
+        | <func-sin> | <func-cos> | <func-tan>
+        | <func-csc> | <func-sec> | <func-cot>
+        | <func-arcsin> | <func-arccos> | <func-arctan>
+        | <func-arccsc> | <func-arcsec> | <func-arccot>
+        | <func-sinh> | <func-cosh> | <func-tanh>
+        | <func-arsinh> | <func-arcosh> | <func-artanh>
+    }
 
     rule func-normal-short {
         <func-normal> [ '(' <func-arg> ')' | <func-arg-noparens> ]
