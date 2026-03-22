@@ -2,7 +2,7 @@ use v6.d;
 
 use LaTeX::Actions::MathJSON;
 
-class LaTeX::Actions::AsciiMath {
+class LaTeX::Actions::AsciiMath is LaTeX::Actions::MathJSON {
 
     my constant %BIN-OPS = (
         Add => '+',
@@ -40,9 +40,7 @@ class LaTeX::Actions::AsciiMath {
     );
 
     method TOP($/) {
-        my $mathjson-actions = LaTeX::Actions::MathJSON.new;
-        $mathjson-actions.TOP($/);
-        my $ast = $/.made;
+        my $ast = LaTeX::Actions::MathJSON.TOP($/);
 
         make self!node($ast);
     }

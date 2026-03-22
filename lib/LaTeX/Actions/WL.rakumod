@@ -2,7 +2,7 @@ use v6.d;
 
 use LaTeX::Actions::MathJSON;
 
-class LaTeX::Actions::WL {
+class LaTeX::Actions::WL is LaTeX::Actions::MathJSON {
 
     my constant %BIN-FUNC = (
         Add => 'Plus',
@@ -38,10 +38,7 @@ class LaTeX::Actions::WL {
     );
 
     method TOP($/) {
-        my $mathjson-actions = LaTeX::Actions::MathJSON.new;
-        $mathjson-actions.TOP($/);
-        my $ast = $/.made;
-
+        my $ast = LaTeX::Actions::MathJSON.TOP($/);
         make self!node($ast);
     }
 
