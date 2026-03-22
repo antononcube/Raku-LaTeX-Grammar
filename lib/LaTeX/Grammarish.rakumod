@@ -151,17 +151,27 @@ role LaTeX::Grammarish {
 
     rule expr-limit { <func-lim> <limit-sub> <mp> }
 
-    rule func {
-        [
+    rule func-normal-short {
+        <func-normal> [ '(' <func-arg> ')' | <func-arg-noparens> ]
+    }
+
+    rule func-normal-full {
         <func-normal>
-        [ <subexpr>? <supexpr>? | <supexpr>? <subexpr>? ]
+        [ <subexpr> <supexpr>? | <supexpr> <subexpr>? ]
         [ '(' <func-arg> ')' | <func-arg-noparens> ]
-        ]
-        |
+    }
+
+    rule func-letter-symbol {
+        [ <letter> | <symbol> ] <subexpr>? '(' <args> ')'
+    }
+
+    rule func {
+
         [
-            [ <letter> | <symbol> ] <subexpr>?
-            '(' <args> ')'
+            || <func-normal-short>
+            || <func-letter-symbol>
         ]
+        | <func-normal-full>
         | <expr-integral>
         | <expr-sqrt>
         | <expr-sum-prod>

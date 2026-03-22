@@ -296,10 +296,6 @@ class LaTeX::Actions::MathJSON {
         make %FUNC-MAP{$name} // $name.tc;
     }
 
-    method expr-intergral($/) {
-        make $<expr-integral>.made if $<expr-integral>;
-    }
-
     method expr-integral($/) {
         my $lower = $<subexpr> ?? $<subexpr>.made !! Any;
         my $upper = $<supexpr> ?? $<supexpr>.made !! Any;
@@ -312,14 +308,9 @@ class LaTeX::Actions::MathJSON {
             1;
         };
 
-        my $var = do if $<differential> {
-            my $d = $<differential>.made;
-            $d ~~ Positional && $d.elems >= 2 ?? $d[1] !! Any;
-        } else {
-            Any;
-        };
+        my $var = $<differential> ?? $<differential>.made.tail !! Any;
 
-        make [ 'Integrate', $integrand, [ 'Tuple', $var, $lower, $upper ] ];
+        make [ 'Integrate', $integrand, [ 'Limits', $var, $lower, $upper ] ];
     }
 
     method expr-sqrt($/) {
@@ -341,47 +332,39 @@ class LaTeX::Actions::MathJSON {
             ($var, $start) = ($lower[1], $lower[2]);
         }
 
-        make [ $head, $body, [ 'Tuple', $var, $start, $upper ] ];
+        make [ $head, $body, [ 'Limits', $var, $start, $upper ] ];
     }
 
     method expr-limit($/) {
         make [ 'Limit', $<mp>.made, $<limit-sub>.made ];
     }
 
-    method func($/) {
-        if $<expr-integral> {
-            make $<expr-integral>.made;
-            return;
-        }
+    method func-normal-short($/) {
+        my $head = $<func-normal>.made;
+        my $arg = $<func-arg> ?? $<func-arg>.made !! $<func-arg-noparens>.made;
+        make [ $head, $arg ];
+    }
 
-        if $<expr-sqrt> {
-            make $<expr-sqrt>.made;
-            return;
+    method func-normal-full($/) {
+        my $head = $<func-normal>.made;
+        my $arg = $<func-arg> ?? $<func-arg>.made !! $<func-arg-noparens>.made;
+        my $res = [ $head, $arg ];
+        if $<supexpr> {
+            $res = ["Power", $res, $<supexpr>.made]
         }
+        make $res;
+    }
 
-        if $<expr-sum-prod> {
-            make $<expr-sum-prod>.made;
-            return;
-        }
-
-        if $<expr-limit> {
-            make $<expr-limit>.made;
-            return;
-        }
-
-        if $<func-normal> {
-            my $head = $<func-normal>.made;
-            my $arg = $<func-arg> ?? $<func-arg>.made !! $<func-arg-noparens>.made;
-            make [ $head, $arg ];
-            return;
-        }
-
+    method func-letter-symbol($/) {
         my $name = $<letter> ?? $<letter>.made !! $<symbol>.made;
         if $<subexpr> {
             $name = [ 'Subscript', $name, $<subexpr>.made ];
         }
-
         make [ 'Apply', $name, $<args>.made ];
+    }
+
+    method func($/) {
+        make $/.values[0].made;
     }
 
     method args($/) {
