@@ -123,11 +123,11 @@ role LaTeX::Grammarish {
         <cmd-frac> '{' <expr> '}' '{' <expr> '}'
     }
 
-    rule expr-integral {
-        <func-int>
-            [ <subexpr> <supexpr>? | <supexpr> <subexpr>? ]?
+    regex expr-integral {
+        <func-int> \h*
+            [ <subexpr> \h* <supexpr>? | <supexpr> \h* <subexpr>? ]?
             [
-                | <additive>? <differential>
+                | <additive>? \h* <differential>
                 | <frac>
                 | <additive>
             ]
@@ -143,7 +143,7 @@ role LaTeX::Grammarish {
         <mp>
     }
 
-    rule expr-limit { <func-lim> <limit-sub> <mp> }
+    regex expr-limit { <func-lim> \h* <limit-sub> \h* <mp> }
 
     token func-normal {
         | <func-log> | <func-ln>
