@@ -3,6 +3,9 @@ use v6.d;
 use JSON::Fast;
 
 class LaTeX::Actions::MathJSON {
+    has $.function-wrap = False;
+
+    submethod BUILD(:$!function-wrap=False) {}
 
     my constant %FUNC-MAP = (
         log => 'Log',
@@ -319,7 +322,7 @@ class LaTeX::Actions::MathJSON {
             }
         }
 
-        if $lower ne 'Nothing' && $upper ne 'Nothing' && $var {
+        if $!function-wrap && $lower ne 'Nothing' && $upper ne 'Nothing' && $var {
             $integrand = ['Function', ['Block', $integrand], $var]
         }
 
