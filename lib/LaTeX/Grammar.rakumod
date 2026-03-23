@@ -1,6 +1,5 @@
 use LaTeX::Grammarish;
 use LaTeX::Actions::MathJSON;
-use LaTeX::Actions::MathJSON-ad-hoc;
 use LaTeX::Actions::MathML;
 use LaTeX::Actions::AsciiMath;
 use LaTeX::Actions::WL;
@@ -22,28 +21,29 @@ our sub latex-parse(Str:D $command, Str:D :$rule = 'TOP') is export {
 
 our sub latex-interpret(Str:D $command,
                         Str:D :$rule = 'TOP',
-                        :t(:to(:a(:$actions))) is copy = LaTeX::Actions::MathJSON.new,
-                        :$format is copy = Whatever;
+                        :t(:to(:a(:$actions))) is copy = Whatever,
+                        :$format is copy = Whatever,
+                        Bool:D :$function-wrap = True
                         ) is export {
     # Choose actions class
     $actions = do given $actions {
         when Whatever {
-            LaTeX::Actions::MathJSON.new
+            LaTeX::Actions::MathJSON.new(:$function-wrap)
         }
 #        when $_ ~~ Str:D && $_.lc ∈ ["mathematica", "wl", "wolfram", "wolfram language"] {
 #            MermaidJS::Actions::WL::Graph.new
 #        }
         when $_ ~~ Str:D && $_.lc ∈ <math-json mathjson json> {
-            LaTeX::Actions::MathJSON.new
+            LaTeX::Actions::MathJSON.new(:$function-wrap)
         }
         when $_ ~~ Str:D && $_.lc ∈ <math-ml mathml mml xml> {
-            LaTeX::Actions::MathML.new
+            LaTeX::Actions::MathML.new(:!function-wrap)
         }
         when $_ ~~ Str:D && $_.lc ∈ <ascii-math asciimath am> {
-            LaTeX::Actions::AsciiMath.new
+            LaTeX::Actions::AsciiMath.new(:!function-wrap)
         }
         when $_ ~~ Str:D && $_.lc ∈ <wl wolfram mathematica wolfram-language> {
-            LaTeX::Actions::WL.new
+            LaTeX::Actions::WL.new(:!function-wrap)
         }
 #        when $_ ~~ Str:D && $_.lc ∈ <raku perl6> {
 #            MermaidJS::Actions::Raku.new
