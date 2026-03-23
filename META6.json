@@ -1,7 +1,7 @@
 {
     "name": "LaTeX::Grammar",
     "description": "LaTeX grammar and related interpreters (actions.)",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "raku": "v6.d",
     "authors": [
         "Anton Antonov"
