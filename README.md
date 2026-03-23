@@ -119,6 +119,8 @@ from-latex --help
   - [ ] TODO Raku actions (using RakuAST)
     - The MathJSON interpreter does give Raku expressions (arrays)
     - But the idea is to make Raku expressions from LaTeX using RakuAST 
+  - [ ] TODO Refactor the MathML, AsciiMath, and WL action classes into a separate MathJSON converter package
+    - Named, say, "MathJSON::Converter" (similar to ["Jupyter::Converter"](https://github.com/antononcube/Raku-Jupyter-Converter)).
 - [ ] TODO Documentation
   - [X] DONE Fuller, more comprehensive README
   - [ ] TODO Blog post
