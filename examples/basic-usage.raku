@@ -4,7 +4,7 @@ use LaTeX::Grammar;
 use Data::Reshapers;
 
 my @formulas = (
-'\\int _{0} ^{1} x^{2} d x',
+'\\int_{0}^{1} x^{2} d x',
 '\\sum_{n=1}^{10} n^2',
 '\\lim_{x\to0} \\frac{\\sin(x)}{x}',
 );
