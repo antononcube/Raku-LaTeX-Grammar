@@ -2,6 +2,7 @@ use v6;
 use Test;
 
 use LaTeX::Grammar;
+use LaTeX::Actions::MathJSON;
 
 my @simple = (
     [ 'x+1', [ 'Add', 'x', 1 ] ],
@@ -26,6 +27,9 @@ my @complex = (
 
 plan *;
 
+my $actions = LaTeX::Actions::MathJSON.new(:function-wrap);
+is $actions.function-wrap, True, 'expected :!function-wrap value';
+
 for @simple -> ($formula, $expected) {
     my $res = latex-interpret($formula, format => 'raku');
     ok $res.defined, "interprets simple formula: $formula";
@@ -33,7 +37,7 @@ for @simple -> ($formula, $expected) {
 }
 
 for @complex -> ($formula, $expected) {
-    my $res = latex-interpret($formula, format => 'raku');
+    my $res = latex-interpret($formula, format => 'raku', :function-wrap);
     ok $res.defined, "interprets complex formula: $formula";
     is-deeply $res, $expected, "MathJSON shape for: $formula";
 }
