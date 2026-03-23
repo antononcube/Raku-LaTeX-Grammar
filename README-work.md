@@ -96,6 +96,7 @@ from-latex --help
          - Simpler: `["Integrate",["Power","x",2],["Limits","x",0,1]]`
        - I contacted ArnoG (creator of CortexJS and MathJSON):
          - He agreed the simpler version has its place as a primary version.
+    - [X] DONE Implement `:$function-wrap` option.
   - [X] DONE MathML actions
     - Based on MathJSON.
   - [X] DONE AsciiMath actions
