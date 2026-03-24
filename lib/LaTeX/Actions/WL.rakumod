@@ -55,7 +55,8 @@ class LaTeX::Actions::WL is LaTeX::Actions::MathJSON {
 
             return %BIN-FUNC{$head} ~ '[' ~ $lhs ~ ',' ~ $rhs ~ ']' if %BIN-FUNC{$head}.defined;
             return 'Plus[' ~ $lhs ~ ',Times[-1,' ~ $rhs ~ ']]' if $head eq 'Subtract';
-            return 'Rational[' ~ $lhs ~ ',' ~ $rhs ~ ']' if $head eq 'Divide';
+            return 'Rational[' ~ $lhs ~ ',' ~ $rhs ~ ']' if $head eq 'Divide' && $lhs ~~ /\d+/ && $rhs ~~ /\d+/;
+            return 'Times[', $lhs, ', Power[' ~ $rhs ~ ', -1]]' if $head eq 'Divide';
         }
 
         given $head {
@@ -121,7 +122,7 @@ class LaTeX::Actions::WL is LaTeX::Actions::MathJSON {
         my $tuple = $x[2];
 
         my ($var, $lower, $upper) = (Any, Any, Any);
-        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Tuple' {
+        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Limits' {
             ($var, $lower, $upper) = ($tuple[1], $tuple[2], $tuple[3]);
         }
 
@@ -137,7 +138,7 @@ class LaTeX::Actions::WL is LaTeX::Actions::MathJSON {
         my $tuple = $x[2];
 
         my ($var, $start, $limit) = (Any, Any, Any);
-        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Tuple' {
+        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Limits' {
             ($var, $start, $limit) = ($tuple[1], $tuple[2], $tuple[3]);
         }
 
