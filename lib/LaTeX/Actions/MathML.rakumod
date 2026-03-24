@@ -32,7 +32,11 @@ class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
         my $head = $x[0];
 
         if $head ~~ Str:D && %BIN-OPS{$head}.defined && $x.elems >= 3 {
-            return self!mrow(self!node($x[1]), self!mo(%BIN-OPS{$head}), self!node($x[2]));
+            if $head eq 'Divide' {
+                return '<mfrac>' ~ self!node($x[1]) ~ self!node($x[2]) ~ '</mfrac>';
+            } else {
+                return self!mrow(self!node($x[1]), self!mo(%BIN-OPS{$head}), self!node($x[2]));
+            }
         }
 
         given $head {
@@ -97,7 +101,7 @@ class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
         my $tuple = $x[2];
 
         my ($var, $lower, $upper) = (Any, Any, Any);
-        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Tuple' {
+        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Limits' {
             ($var, $lower, $upper) = ($tuple[1], $tuple[2], $tuple[3]);
         }
 
@@ -112,7 +116,7 @@ class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
         my $tuple = $x[2];
 
         my ($var, $start, $limit) = (Any, Any, Any);
-        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Tuple' {
+        if $tuple ~~ Positional:D && $tuple.elems == 4 && $tuple[0] eq 'Limits' {
             ($var, $start, $limit) = ($tuple[1], $tuple[2], $tuple[3]);
         }
 
@@ -144,11 +148,21 @@ class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
     }
 
     method !bounded-op(Str:D $sym, $lower, $upper) {
-        my $op = self!mo($sym);
+        my $op = $sym.starts-with('<mo>') ?? $sym !! self!mo($sym);
 
-        return '<msubsup>' ~ $op ~ self!node($lower) ~ self!node($upper) ~ '</msubsup>' if $lower.defined && $upper.defined;
-        return '<msub>' ~ $op ~ self!node($lower) ~ '</msub>' if $lower.defined;
-        return '<msup>' ~ $op ~ self!node($upper) ~ '</msup>' if $upper.defined;
+        my $lower2 = Any;
+        with $lower {
+            $lower2 = $lower ~~ / ^ '<mi>' | '<mn>' /  ?? $lower !! self!node($lower);
+        }
+
+        my $upper2 = Any;
+        with $upper {
+            $upper2 = $upper ~~ / ^ '<mi>' | '<mn>' / ?? $upper !! self!node($upper);
+        }
+
+        return '<msubsup>' ~ $op ~ $lower2 ~ $upper2 ~ '</msubsup>' if $lower.defined && $upper.defined;
+        return '<msub>' ~ $op ~ $lower2 ~ '</msub>' if $lower.defined;
+        return '<msup>' ~ $op ~ $upper2 ~ '</msup>' if $upper.defined;
 
         $op;
     }
