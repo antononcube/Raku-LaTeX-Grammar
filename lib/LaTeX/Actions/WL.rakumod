@@ -55,7 +55,7 @@ class LaTeX::Actions::WL is LaTeX::Actions::MathJSON {
 
             return %BIN-FUNC{$head} ~ '[' ~ $lhs ~ ',' ~ $rhs ~ ']' if %BIN-FUNC{$head}.defined;
             return 'Plus[' ~ $lhs ~ ',Times[-1,' ~ $rhs ~ ']]' if $head eq 'Subtract';
-            return 'Rational[' ~ $lhs ~ ',' ~ $rhs ~ ']' if $head eq 'Divide' && $lhs ~~ /\d+/ && $rhs ~~ /\d+/;
+            return 'Rational[' ~ $lhs ~ ',' ~ $rhs ~ ']' if $head eq 'Divide' && $lhs ~~ / ['+'|'-'] \d+/ && $rhs ~~ /['+'|'-'] \d+/;
             return 'Times[', $lhs, ', Power[' ~ $rhs ~ ', -1]]' if $head eq 'Divide';
         }
 
