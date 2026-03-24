@@ -7,17 +7,17 @@ my @simple = (
     [ 'x', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math>' ],
     [ 'x+1', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow></math>' ],
     [ 'a-b', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>-</mo><mi>b</mi></mrow></math>' ],
-    [ '\\frac{1}{2}', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>1</mn><mo>/</mo><mn>2</mn></mrow></math>' ],
+    [ '\\frac{1}{2}', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mn>1</mn><mn>2</mn></mfrac></math>' ],
     [ '\\sqrt{x}', '<math xmlns="http://www.w3.org/1998/Math/MathML"><msqrt><mi>x</mi></msqrt></math>' ],
     [ '\\sin(x)', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>sin</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow></math>' ],
     [ 'x^2+y_1', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><msub><mi>y</mi><mn>1</mn></msub></mrow></math>' ],
 );
 
-my @complex = (
-    '\\int_{0}^{1} x^2 d x',
-    '\\sum_{n=1}^{10} n^2',
-    '\\lim_{x\\to0} \\frac{\\sin(x)}{x}',
-);
+my @complex =
+    ['\\int_{0}^{1} x^2 dx', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msubsup><mo>&#x222B;</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mrow><mo>d</mo><mi>x</mi></mrow></mrow></math>'],
+    ['\\sum_{n=1}^{10} n^2', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msubsup><mo>&#x2211;</mo><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><mn>10</mn></msubsup><msup><mi>n</mi><mn>2</mn></msup></mrow></math>'],
+    ['\\lim_{x\\to0} \\frac{\\sin(x)}{x}', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><munder><mi>lim</mi><mrow><mi>x</mi><mo>&#x2192;</mo><mn>0</mn></mrow></munder><mfrac><mrow><mi>sin</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mi>x</mi></mfrac></mrow></math>']
+;
 
 plan *;
 
@@ -27,10 +27,11 @@ for @simple -> ($formula, $expected) {
     is $res, $expected, "MathML shape for: $formula";
 }
 
-for @complex -> $formula {
+for @complex -> ($formula, $expected) {
     my $res = latex-interpret($formula, actions => 'mathml', format => 'raku');
     ok $res.defined, "interprets complex formula: $formula";
     like $res, / '<math' .* '</math>' /, "returns MathML document for: $formula";
+    is $res, $expected, "MathML shape for: $formula";
 }
 
 done-testing;
