@@ -10,6 +10,7 @@ class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
         Subtract => '-',
         Multiply => '&#xD7;',
         Divide => '/',
+        Rational => '/',
         Equal => '=',
         Less => '&lt;',
         Greater => '&gt;',
@@ -32,7 +33,7 @@ class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
         my $head = $x[0];
 
         if $head ~~ Str:D && %BIN-OPS{$head}.defined && $x.elems >= 3 {
-            if $head eq 'Divide' {
+            if $head ∈ <Divide Rational> {
                 return '<mfrac>' ~ self!node($x[1]) ~ self!node($x[2]) ~ '</mfrac>';
             } else {
                 return self!mrow(self!node($x[1]), self!mo(%BIN-OPS{$head}), self!node($x[2]));

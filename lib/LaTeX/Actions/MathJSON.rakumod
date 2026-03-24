@@ -290,8 +290,9 @@ class LaTeX::Actions::MathJSON {
     }
 
     method frac($/) {
-        my @parts = self!capture-list($/, 'expr').map(*.made);
-        make [ 'Divide', @parts[0], @parts[1] ];
+        my @parts = |self!capture-list($/, 'expr').map(*.made);
+        my $op = @parts.all ~~ Int:D ?? 'Rational' !! 'Divide';
+        make [ $op, @parts[0], @parts[1] ];
     }
 
     method func-normal($/) {

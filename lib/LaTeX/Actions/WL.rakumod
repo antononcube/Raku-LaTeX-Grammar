@@ -43,19 +43,19 @@ class LaTeX::Actions::WL is LaTeX::Actions::MathJSON {
     }
 
     method !node($x) {
-        return $x.Str if $x ~~ Int || $x ~~ Rat || $x ~~ Num;
-        return $x if $x ~~ Str;
-        return '' unless $x ~~ Positional && $x.elems > 0;
+        return $x.Str if $x ~~ Int:D || $x ~~ Rat:D || $x ~~ Num:D;
+        return $x if $x ~~ Str:D;
+        return '' unless $x ~~ Positional:D && $x.elems > 0;
 
         my $head = $x[0];
 
-        if $head ~~ Str && $x.elems >= 3 {
+        if $head ~~ Str:D && $x.elems >= 3 {
             my $lhs = self!node($x[1]);
             my $rhs = self!node($x[2]);
 
             return %BIN-FUNC{$head} ~ '[' ~ $lhs ~ ',' ~ $rhs ~ ']' if %BIN-FUNC{$head}.defined;
             return 'Plus[' ~ $lhs ~ ',Times[-1,' ~ $rhs ~ ']]' if $head eq 'Subtract';
-            return 'Rational[' ~ $lhs ~ ',' ~ $rhs ~ ']' if $head eq 'Divide' && $lhs ~~ / ['+'|'-'] \d+/ && $rhs ~~ /['+'|'-'] \d+/;
+            return 'Rational[' ~ $lhs ~ ',' ~ $rhs ~ ']' if $head eq 'Divide' && $lhs ~~ / ['+'|'-']? \d+/ && $rhs ~~ / ['+'|'-']? \d+/;
             return 'Times[', $lhs, ', Power[' ~ $rhs ~ ', -1]]' if $head eq 'Divide';
         }
 

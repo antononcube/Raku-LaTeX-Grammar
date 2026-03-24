@@ -9,6 +9,7 @@ class LaTeX::Actions::AsciiMath is LaTeX::Actions::MathJSON {
         Subtract => '-',
         Multiply => '*',
         Divide => '/',
+        Rational => '/',
         Equal => '=',
         Less => '<',
         Greater => '>',
