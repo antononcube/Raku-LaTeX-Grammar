@@ -68,6 +68,8 @@ my @res = do for @formulas -> $fm {
 ==> { .subst('"', :g) }()
 ```
 
+See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
+
 -----
 
 ## CLI
