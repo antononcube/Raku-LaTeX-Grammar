@@ -84,7 +84,7 @@ from-latex --help
 ```
 ```
 # Usage:
-#   /Users/antonov/.rakubrew/versions/moar-2025.12/share/perl6/site/bin/from-latex.raku <text> [-t|--format|--to=<Str>] [-o|--output=<Str>] -- Converts LaTeX code or files into AsciiMath, MathJSON, MathML, Mathematica, or Raku files.
+#   from-latex <text> [-t|--format|--to=<Str>] [-o|--output=<Str>] -- Converts LaTeX code or files into AsciiMath, MathJSON, MathML, Mathematica, or Raku files.
 #   
 #     <text>                    Input file or LaTeX spec.
 #     -t|--format|--to=<Str>    Language to translate to. (One of 'asciimath', 'mathjson', 'mathml', 'mathematica', 'raku', or 'Whatever'.) [default: 'Whatever']
