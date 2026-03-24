@@ -291,8 +291,12 @@ class LaTeX::Actions::MathJSON {
 
     method frac($/) {
         my @parts = |self!capture-list($/, 'expr').map(*.made);
-        my $op = @parts.all ~~ Int:D ?? 'Rational' !! 'Divide';
-        make [ $op, @parts[0], @parts[1] ];
+        my &is-neg-int = { $_ ~~ Positional:D && $_.elems == 2 && $_.head eq 'Negate' && $_.tail ~~ Int:D };
+        my &is-int = { $_ ~~ Int:D || $_.&is-neg-int };
+        my $op = @parts[0].&is-int && @parts[1].&is-int ?? 'Rational' !! 'Divide';
+        make [ $op,
+               @parts[0].&is-neg-int ?? -@parts[0].tail !! @parts[0],
+               @parts[1].&is-neg-int ?? -@parts[1].tail !! @parts[1] ];
     }
 
     method func-normal($/) {
