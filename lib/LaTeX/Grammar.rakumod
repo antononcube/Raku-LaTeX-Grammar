@@ -1,7 +1,8 @@
 use LaTeX::Grammarish;
+use LaTeX::Actions::AsciiMath;
 use LaTeX::Actions::MathJSON;
 use LaTeX::Actions::MathML;
-use LaTeX::Actions::AsciiMath;
+use LaTeX::Actions::RakuAST;
 use LaTeX::Actions::WL;
 use JSON::Fast;
 
@@ -45,9 +46,9 @@ our sub latex-interpret(Str:D $command,
         when $_ ~~ Str:D && $_.lc ∈ <wl wolfram mathematica wolfram-language> {
             LaTeX::Actions::WL.new(:!function-wrap)
         }
-#        when $_ ~~ Str:D && $_.lc ∈ <raku perl6> {
-#            MermaidJS::Actions::Raku.new
-#        }
+        when $_ ~~ Str:D && $_.lc ∈ <raku rakuast perl6> {
+            LaTeX::Actions::RakuAST.new(:!function-wrap)
+        }
         default {
             $actions
         }
