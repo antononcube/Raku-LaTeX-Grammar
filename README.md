@@ -46,7 +46,7 @@ use LaTeX::Grammar;
 latex-interpret('\frac{1}{x}=\sqrt{y}')
 ```
 ```
-# ["Equal",["Divide",1,"x"],["Root","y",2]]
+# [Equal [Divide 1 x] [Root y 2]]
 ```
 
 A table that show interpretations to different formats:
@@ -63,15 +63,18 @@ my @formulas = (
 my @targets = <AsciiMath WL MathJSON>;
 
 my @res = do for @formulas -> $fm {
-    [LaTeX => $fm, MathML => "latex«$fm»", |@targets.map({ $_ => latex-interpret($fm, actions => $_) })].Hash
+    [LaTeX => $fm, 
+     MathML => "latex«$fm»", 
+     RakuAST => latex-interpret($fm, actions => 'RakuAST').DEPARSE, 
+     |@targets.map({ $_ => latex-interpret($fm, actions => $_).gist })].Hash
 }
 
 @res 
-==> to-html(field-names => ['LaTeX', 'MathML', |@targets], align => 'left')
+==> to-html(field-names => ['LaTeX', 'MathML', 'RakuAST', |@targets], align => 'left')
 ==> { .subst(/ 'latex«' (.*?) '»' /, { latex-interpret($0.Str, actions => 'MathML')}, :g) }()
 ==> { .subst('"', :g) }()
 ```
-<table border=1><thead><tr><th>LaTeX</th><th>MathML</th><th>AsciiMath</th><th>WL</th><th>MathJSON</th></tr></thead><tbody><tr><td align=left>\sqrt{4 * x^2 + 12 * x + 9}</td><td align=left><math xmlns=\http://www.w3.org/1998/Math/MathML\><msqrt><mrow><mrow><mrow><mn>4</mn><mo>&#xD7;</mo><msup><mi>x</mi><mn>2</mn></msup></mrow><mo>+</mo><mrow><mn>12</mn><mo>&#xD7;</mo><mi>x</mi></mrow></mrow><mo>+</mo><mn>9</mn></mrow></msqrt></math></td><td align=left>&quot;sqrt((4*x^2+12*x)+9)&quot;</td><td align=left>&quot;Sqrt[Plus[Plus[Times[4,Power[x,2]],Times[12,x]],9]]&quot;</td><td align=left>[&quot;Root&quot;,[&quot;Add&quot;,[&quot;Add&quot;,[&quot;Multiply&quot;,4,[&quot;Power&quot;,&quot;x&quot;,2]],[&quot;Multiply&quot;,12,&quot;x&quot;]],9],2]</td></tr><tr><td align=left>\int_{0}^{1} x^{2} d x</td><td align=left><math xmlns=\http://www.w3.org/1998/Math/MathML\><mrow><msubsup><mo>&#x222B;</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mrow><mo>d</mo><mi>x</mi></mrow></mrow></math></td><td align=left>&quot;int x^2&quot;</td><td align=left>&quot;Integrate[Power[x,2],{x,0,1}]&quot;</td><td align=left>[&quot;Integrate&quot;,[&quot;Function&quot;,[&quot;Block&quot;,[&quot;Power&quot;,&quot;x&quot;,2]],&quot;x&quot;],[&quot;Limits&quot;,&quot;x&quot;,0,1]]</td></tr><tr><td align=left>\sum_{n=1}^{10} n^2</td><td align=left><math xmlns=\http://www.w3.org/1998/Math/MathML\><mrow><msubsup><mo>&#x2211;</mo><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><mn>10</mn></msubsup><msup><mi>n</mi><mn>2</mn></msup></mrow></math></td><td align=left>&quot;sum n^2&quot;</td><td align=left>&quot;Sum[Power[n,2],{n,1,10}]&quot;</td><td align=left>[&quot;Sum&quot;,[&quot;Power&quot;,&quot;n&quot;,2],[&quot;Limits&quot;,&quot;n&quot;,1,10]]</td></tr><tr><td align=left>\lim_{x\to0} \frac{\sin(x)}{x}</td><td align=left><math xmlns=\http://www.w3.org/1998/Math/MathML\><mrow><munder><mi>lim</mi><mrow><mi>x</mi><mo>&#x2192;</mo><mn>0</mn></mrow></munder><mfrac><mrow><mi>sin</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mi>x</mi></mfrac></mrow></math></td><td align=left>&quot;lim_(x-&gt;0) sin(x)/x&quot;</td><td align=left>&quot;Limit[Times[ Sin[x] , Power[x, -1]],x-&gt;0]&quot;</td><td align=left>[&quot;Limit&quot;,[&quot;Function&quot;,[&quot;Block&quot;,[&quot;Divide&quot;,[&quot;Sin&quot;,&quot;x&quot;],&quot;x&quot;]],&quot;x&quot;],0]</td></tr></tbody></table>
+<table border=1><thead><tr><th>LaTeX</th><th>MathML</th><th>RakuAST</th><th>AsciiMath</th><th>WL</th><th>MathJSON</th></tr></thead><tbody><tr><td align=left>\sqrt{4 * x^2 + 12 * x + 9}</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><msqrt><mrow><mrow><mrow><mn>4</mn><mo>&#xD7;</mo><msup><mi>x</mi><mn>2</mn></msup></mrow><mo>+</mo><mrow><mn>12</mn><mo>&#xD7;</mo><mi>x</mi></mrow></mrow><mo>+</mo><mn>9</mn></mrow></msqrt></math></td><td align=left>sqrt((((4 * (x ** 2)) + (12 * x)) + 9))</td><td align=left>sqrt((4*x^2+12*x)+9)</td><td align=left>Sqrt[Plus[Plus[Times[4,Power[x,2]],Times[12,x]],9]]</td><td align=left>[Root [Add [Add [Multiply 4 [Power x 2]] [Multiply 12 x]] 9] 2]</td></tr><tr><td align=left>\int_{0}^{1} x^{2} d x</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><msubsup><mo>&#x222B;</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mrow><mo>d</mo><mi>x</mi></mrow></mrow></math></td><td align=left>integral((x ** 2), x, 0, 1)</td><td align=left>int x^2</td><td align=left>Integrate[Power[x,2],{x,0,1}]</td><td align=left>[Integrate [Function [Block [Power x 2]] x] [Limits x 0 1]]</td></tr><tr><td align=left>\sum_{n=1}^{10} n^2</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><msubsup><mo>&#x2211;</mo><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><mn>10</mn></msubsup><msup><mi>n</mi><mn>2</mn></msup></mrow></math></td><td align=left>sum((n ** 2), n, 1, 10)</td><td align=left>sum n^2</td><td align=left>Sum[Power[n,2],{n,1,10}]</td><td align=left>[Sum [Power n 2] [Limits n 1 10]]</td></tr><tr><td align=left>\lim_{x\to0} \frac{\sin(x)}{x}</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><munder><mi>lim</mi><mrow><mi>x</mi><mo>&#x2192;</mo><mn>0</mn></mrow></munder><mfrac><mrow><mi>sin</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mi>x</mi></mfrac></mrow></math></td><td align=left>limit((sin(x) / x), x, 0, &quot;TwoSided&quot;)</td><td align=left>lim_(x-&gt;0) sin(x)/x</td><td align=left>Limit[Times[ Sin[x] , Power[x, -1]],x-&gt;0]</td><td align=left>[Limit [Function [Block [Divide [Sin x] x]] x] 0]</td></tr></tbody></table>
 
 
 See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
@@ -82,7 +85,7 @@ Translating LaTeX to RakuAST:
 latex-interpret('\sum_{n=1}^{10} n^2', actions => 'RakuAST').DEPARSE
 ```
 ```
-# (1..10).map(-> $n { $n ** 2 }).sum
+# sum((n ** 2), n, 1, 10)
 ```
 
 
@@ -97,11 +100,12 @@ from-latex --help
 ```
 ```
 # Usage:
-#   from-latex <text> [-t|--format|--to=<Str>] [-o|--output=<Str>] -- Converts LaTeX code or files into AsciiMath, MathJSON, MathML, Mathematica, or Raku files.
+#   from-latex <text> [-t|--actions|--to=<Str>] [-f|--format=<Str>] [-o|--output=<Str>] -- Converts LaTeX code or files into AsciiMath, MathJSON, MathML, Mathematica, or Raku files.
 #   
-#     <text>                    Input file or LaTeX spec.
-#     -t|--format|--to=<Str>    Language to translate to. (One of 'asciimath', 'mathjson', 'mathml', 'mathematica', 'raku', or 'Whatever'.) [default: 'Whatever']
-#     -o|--output=<Str>         Output file; if an empty string then the result is printed to stdout. [default: '']
+#     <text>                     Input file or LaTeX spec.
+#     -t|--actions|--to=<Str>    Language to translate to. (One of 'asciimath', 'mathjson', 'mathml', 'mathematica', 'raku', 'rakuast', 'wolfram', or 'Whatever'.) [default: 'Whatever']
+#     -f|--format=<Str>          Format of the result. (One of 'ast', 'json', 'raku', or 'Whatever'.) [default: 'Whatever']
+#     -o|--output=<Str>          Output file; if an empty string then the result is printed to stdout. [default: '']
 ```
 
 -----

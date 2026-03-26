@@ -60,11 +60,14 @@ my @formulas = (
 my @targets = <AsciiMath WL MathJSON>;
 
 my @res = do for @formulas -> $fm {
-    [LaTeX => $fm, MathML => "latex«$fm»", |@targets.map({ $_ => latex-interpret($fm, actions => $_) })].Hash
+    [LaTeX => $fm, 
+     MathML => "latex«$fm»", 
+     RakuAST => latex-interpret($fm, actions => 'RakuAST').DEPARSE, 
+     |@targets.map({ $_ => latex-interpret($fm, actions => $_).gist })].Hash
 }
 
 @res 
-==> to-html(field-names => ['LaTeX', 'MathML', |@targets], align => 'left')
+==> to-html(field-names => ['LaTeX', 'MathML', 'RakuAST', |@targets], align => 'left')
 ==> { .subst(/ 'latex«' (.*?) '»' /, { latex-interpret($0.Str, actions => 'MathML')}, :g) }()
 ==> { .subst('"', :g) }()
 ```
