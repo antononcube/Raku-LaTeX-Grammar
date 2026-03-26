@@ -20,8 +20,8 @@ my @formulas = (
 plan *;
 
 for @formulas -> $formula {
-    my $res = latex-interpret($formula, actions => 'raku', format => 'raku');
-    #say (:$formula, res => $res.DEPARSE);
+    my $res = latex-interpret($formula, actions => 'rakuast');
+    #say (:$formula, :$res);
     ok $res.defined, "interprets formula: $formula";
     ok $res.^name.starts-with('RakuAST::'), "returns RakuAST node for: $formula";
 }
