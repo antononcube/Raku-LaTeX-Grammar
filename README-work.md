@@ -6,6 +6,7 @@ The implemented interpretation formats are:
 - [MathJSON](https://mathlive.io/math-json/)
 - [MathML](https://www.w3.org/TR/mathml4/), [Wikipedia](https://en.wikipedia.org/wiki/MathML)
 - [AsciiMath](https://asciimath.org), [Wikipedia](https://en.wikipedia.org/wiki/AsciiMath)
+- [RakuAST](https://docs.raku.org/type/RakuAST)
 - [Wolfram Language](https://reference.wolfram.com/language), [Wikipedia](https://en.wikipedia.org/wiki/Wolfram_Language)
 
 The MathJSON interpreter was the first to be implemented, and it is the most important one -- the rest are derived from it.
@@ -70,6 +71,13 @@ my @res = do for @formulas -> $fm {
 
 See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
 
+Translating LaTeX to RakuAST:
+
+```raku
+latex-interpret('\sum_{n=1}^{10} n^2', actions => 'RakuAST').DEPARSE
+```
+
+
 -----
 
 ## CLI
@@ -105,7 +113,7 @@ from-latex --help
     - Based on MathJSON.
   - [X] DONE Wolfram Language (WL) actions
     - Based on MathJSON.
-  - [ ] TODO Raku actions (using RakuAST)
+  - [X] DONE Raku actions (using RakuAST)
     - The MathJSON interpreter does give Raku expressions (arrays)
     - But the idea is to make Raku expressions from LaTeX using RakuAST
   - [ ] TODO Refactor the MathML, AsciiMath, and WL action classes into a separate MathJSON converter package
