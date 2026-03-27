@@ -124,6 +124,26 @@ class LaTeX::Actions::RakuAST is LaTeX::Actions::MathJSON {
     }
 
     method !sum-or-product-source($x, Str:D $op) {
+        my $tuple = $x[2];
+        my $body = self!to-source($x[1]);
+        my $reduce-op = $op eq 'product' ?? '*' !! '+';
+
+        my ($var, $start, $limit) = (Any, Any, Any);
+        if $tuple ~~ Positional:D && $tuple.elems == 4 && $tuple[0] eq 'Limits' {
+            ($var, $start, $limit) = ($tuple[1], $tuple[2], $tuple[3]);
+        }
+
+        my $var-name = $var ~~ Str:D ?? $var !! 'i';
+        my $lex = '$' ~ $var-name;
+        my $start-src = self!to-source($start);
+        my $limit-src = self!to-source($limit);
+        my $body-src = $body.subst(self!symbol-ref($var-name), $lex, :g);
+
+        '[' ~ $reduce-op ~ '] (' ~ $start-src ~ '..' ~ $limit-src ~ ').map(-> ' ~ $lex ~ ' { ' ~ $body-src ~ ' })';
+    }
+
+    # This is kept as a reference, produces from '\sum_{n=1}^{10} n^2' constructs like 'sum((n ** 2), n, 1, 10)'
+    method !sum-or-product-source-classic($x, Str:D $op) {
         my $body = self!to-source($x[1]);
         my $tuple = $x[2];
 
@@ -134,8 +154,8 @@ class LaTeX::Actions::RakuAST is LaTeX::Actions::MathJSON {
 
         return self!call-by-name($op, $body) unless $var.defined;
         return self!call-by-name($op, $body, self!to-source($var),
-            self!to-source($start), self!to-source($limit))
-            if $start.defined && $limit.defined;
+                self!to-source($start), self!to-source($limit))
+        if $start.defined && $limit.defined;
 
         self!call-by-name($op, $body, self!to-source($var));
     }
