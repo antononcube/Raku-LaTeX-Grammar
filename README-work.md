@@ -73,7 +73,7 @@ my @res = do for @formulas -> $fm {
 ==> { $_.flat(1) }()
 ==> to-html(field-names => <LaTeX Format Translation>, align => 'left')
 ==> { .subst(/ 'latex«' (.*?) '»' /, { latex-interpret($0.Str, actions => 'MathML')}, :g) }()
-==> { $_.join("\n").subst(/ '"' | '&quot;' /, :g) }()
+==> { .subst(/ '"' | '&quot;' /, :g).subst('\{', '{', :g) }()
 ```
 
 See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
