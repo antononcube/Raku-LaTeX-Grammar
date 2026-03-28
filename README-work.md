@@ -50,26 +50,30 @@ A table that show interpretations to different formats:
 
 ```raku, results=asis
 use Data::Translators;
+use Data::Reshapers;
 
 my @formulas = (
+'\frac{-1214}{117}',
 '\\sqrt{4 * x^2 + 12 * x + 9}',
 '\\int_{0}^{1} x^{2} d x',
 '\\sum_{n=1}^{10} n^2',
 '\\lim_{x\\to0} \\frac{\\sin(x)}{x}',
+'\\log_{5} x',
+'\log\left( \frac{x+1}{x-1} \right)'
 );
 my @targets = <AsciiMath WL MathJSON>;
 
 my @res = do for @formulas -> $fm {
-    [LaTeX => $fm, 
-     MathML => "latex«$fm»", 
-     RakuAST => latex-interpret($fm, actions => 'RakuAST').DEPARSE, 
-     |@targets.map({ $_ => latex-interpret($fm, actions => $_).gist })].Hash
+    [LaTeX => $fm, MathML => "latex«$fm»", |@targets.map({ $_ => latex-interpret($fm, actions => $_).raku })].Hash
 }
 
 @res 
-==> to-html(field-names => ['LaTeX', 'MathML', 'RakuAST', |@targets], align => 'left')
+==> { .&to-long-format(id-columns => 'LaTeX', variables-to => 'Format', values-to => 'Translation') }()
+==> { group-by($_, 'LaTeX').map({ $_.value.sort(*<LaTeX Format>).kv.map(-> $i, %r { %r<LaTeX> ='' if $i; %r }) }) }()
+==> { $_.flat(1) }()
+==> to-html(field-names => <LaTeX Format Translation>, align => 'left')
 ==> { .subst(/ 'latex«' (.*?) '»' /, { latex-interpret($0.Str, actions => 'MathML')}, :g) }()
-==> { .subst('"', :g) }()
+==> { $_.join("\n").subst(/ '"' | '&quot;' /, :g) }()
 ```
 
 See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
@@ -117,8 +121,9 @@ from-latex --help
   - [X] DONE Wolfram Language (WL) actions
     - Based on MathJSON.
   - [X] DONE Raku actions (using RakuAST)
-    - The MathJSON interpreter does give Raku expressions (arrays)
-    - But the idea is to make Raku expressions from LaTeX using RakuAST
+    - The MathJSON interpreter does give Raku expressions (arrays.)
+    - But the idea is to make Raku expressions from LaTeX using RakuAST.
+      - Or generate code and produce AST objects from it.
   - [ ] TODO Refactor the MathML, AsciiMath, and WL action classes into a separate MathJSON converter package
     - Named, say, "MathJSON::Converter" (similar to ["Jupyter::Converter"](https://github.com/antononcube/Raku-Jupyter-Converter)).
 - [ ] TODO Documentation
