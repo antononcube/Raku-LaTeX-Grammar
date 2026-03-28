@@ -87,7 +87,15 @@ class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
             when 'Limit' {
                 return self!limit($x);
             }
-            when /^(Sin|Cos|Tan|Csc|Sec|Cot|Arcsin|Arccos|Arctan|Arccsc|Arcsec|Arccot|Sinh|Cosh|Tanh|Arsinh|Arcosh|Artanh|Log|Ln)$/ {
+            when 'Log' {
+                my $fname = $head.lc;
+                return do if $x.elems == 2 {
+                    self!mrow(self!mi($fname), self!mo('('), self!node($x[1]), self!mo(')'))
+                } else {
+                    self!mrow('<msub>' ~ self!mi($fname) ~ self!node($x[2]) ~ '</msub>', self!mo('('), self!node($x[1]), self!mo(')'))
+                }
+            }
+            when /^(Sin|Cos|Tan|Csc|Sec|Cot|Arcsin|Arccos|Arctan|Arccsc|Arcsec|Arccot|Sinh|Cosh|Tanh|Arsinh|Arcosh|Artanh)$/ {
                 my $fname = $head.lc;
                 return self!mrow(self!mi($fname), self!mo('('), self!node($x[1]), self!mo(')'));
             }
