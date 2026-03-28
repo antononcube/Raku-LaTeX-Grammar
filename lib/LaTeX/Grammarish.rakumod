@@ -17,6 +17,8 @@ role LaTeX::Grammarish {
     token rel-op { '=' | '<' | '\\leq' | '>' | '\\geq' }
     token approach-sym { '\\to' | '\\rightarrow' | '\\Rightarrow' | '\\longrightarrow' | '\\Longrightarrow' }
 
+    token left-par   { '\\left(' }
+    token right-par  { '\\right)' }
     token func-lim   { '\\lim' }
     token func-int   { '\\int' }
     token func-sum   { '\\sum' }
@@ -49,7 +51,10 @@ role LaTeX::Grammarish {
     token cmd-frac   { '\\frac' }
     token cmd-mathit { '\\mathit' }
 
-    token symbol { '\\' <[a..zA..Z]>+ }
+    token symbol {
+        | '\\' <[a..zA..Z]>+ <!before ['(' | ')']>
+        | ('\\' <[a..zA..Z]>+) <?{ $0.Str ∉ <\left \right> }>
+    }
 
     token number {
         [ <digit>+ [ ',' <digit>**3 ]* ]
@@ -105,6 +110,7 @@ role LaTeX::Grammarish {
         | '(' <expr> ')'
         | '[' <expr> ']'
         | '{' <expr> '}'
+        | <left-par> <expr> <right-par>
     }
 
     rule abs-group { '|' <expr> '|' }
