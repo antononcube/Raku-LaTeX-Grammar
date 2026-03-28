@@ -258,6 +258,11 @@ class LaTeX::Actions::MathJSON {
     }
 
     method atom($/) {
+        if $<log> {
+            make $<log>.made;
+            return;
+        }
+
         if $<number> {
             make $<number>.made;
             return;
@@ -303,6 +308,12 @@ class LaTeX::Actions::MathJSON {
         } else {
             make ['Divide', @parts[0], @parts[1]]
         }
+    }
+
+    method log($/) {
+        # No special treatment for <func-ln>
+        my $op = $<func-log> ?? 'Log' !! 'Log';
+        make $<subexpr> ?? [$op, $<expr>.made, $<subexpr>.made] !! [$op, $<expr>.made];
     }
 
     method func-normal($/) {

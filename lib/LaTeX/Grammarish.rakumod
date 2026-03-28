@@ -116,6 +116,7 @@ role LaTeX::Grammarish {
     rule abs-group { '|' <expr> '|' }
 
     rule atom {
+        | <log>
         | [ <letter> | <symbol> ] <subexpr>?
         | <number>
         | <differential>
@@ -127,6 +128,11 @@ role LaTeX::Grammarish {
 
     rule frac {
         <cmd-frac> '{' <expr> '}' '{' <expr> '}'
+    }
+
+    # Not used, but has to be
+    rule log {
+        [ <func-log> | <func-ln> ] <subexpr>? <expr>
     }
 
     regex expr-integral {
@@ -152,7 +158,7 @@ role LaTeX::Grammarish {
     regex expr-limit { <func-lim> \h* <limit-sub> \h* <mp> }
 
     token func-normal {
-        | <func-log> | <func-ln>
+        #| <func-log> | <func-ln>
         | <func-sin> | <func-cos> | <func-tan>
         | <func-csc> | <func-sec> | <func-cot>
         | <func-arcsin> | <func-arccos> | <func-arctan>
