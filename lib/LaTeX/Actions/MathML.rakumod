@@ -35,6 +35,16 @@ class LaTeX::Actions::MathML is LaTeX::Actions::MathJSON {
         if $head ~~ Str:D && %BIN-OPS{$head}.defined && $x.elems >= 3 {
             if $head ∈ <Divide Rational> {
                 return '<mfrac>' ~ self!node($x[1]) ~ self!node($x[2]) ~ '</mfrac>';
+            } elsif $head eq 'Multiply' {
+                my $lhs = self!node($x[1]);
+                if $x[1].head ∈ <Add Subtract> {
+                    $lhs = self!mrow(self!mo('('), $lhs, self!mo(')'))
+                }
+                my $rhs = self!node($x[2]);
+                if $x[2].head ∈ <Add Subtract> {
+                    $rhs = self!mrow(self!mo('('), $rhs, self!mo(')'))
+                }
+                return self!mrow($lhs, self!mo(%BIN-OPS{$head}), $rhs);
             } else {
                 return self!mrow(self!node($x[1]), self!mo(%BIN-OPS{$head}), self!node($x[2]));
             }
