@@ -105,6 +105,15 @@ class LaTeX::Actions::WL is LaTeX::Actions::MathJSON {
             when 'Limit' {
                 return self!limit($x);
             }
+            when 'Log' {
+                when 'Log' {
+                    return do if $x.elems == 2 {
+                        'Log[' ~ self!node($x[1]) ~ ']'
+                    } else {
+                        'Log[' ~ self!node($x[2]) ~ ',' ~ self!node($x[1]) ~ ']'
+                    }
+                }
+            }
             when $head ~~ Str && %FUNC-MAP{$head}.defined {
                 return %FUNC-MAP{$head} ~ '[' ~ self!node($x[1]) ~ ']';
             }

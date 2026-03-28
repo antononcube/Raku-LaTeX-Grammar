@@ -12,6 +12,8 @@ my @simple = (
     [ '\\sqrt{x}', 'Sqrt[x]' ],
     [ '\\sin(x)', 'Sin[x]' ],
     [ 'x^2+y_1', 'Plus[Power[x,2],Subscript[y,1]]' ],
+    [ '\log (x + 1)', 'Log[Plus[x,1]]' ],
+    [ '\log_5 x', 'Log[5,x]' ],
 );
 
 my @complex = (

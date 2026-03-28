@@ -10,6 +10,8 @@ my @simple = (
     [ '\\sqrt{x}', 'sqrt(x)' ],
     [ '\\sin(x)', 'sin(x)' ],
     [ 'x^2+y_1', 'x^2+y_1' ],
+    [ '\log (x + 1)', 'log(x+1)' ],
+    [ '\log_5 x', 'log_5(x)' ],
 );
 
 my @complex = (

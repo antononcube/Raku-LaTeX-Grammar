@@ -105,6 +105,13 @@ class LaTeX::Actions::AsciiMath is LaTeX::Actions::MathJSON {
             when 'Limit' {
                 return self!limit($x);
             }
+            when 'Log' {
+                return do if $x.elems == 2 {
+                    'log(' ~ self!node($x[1]) ~ ')'
+                } else {
+                    'log_' ~ self!node($x[2]) ~ '(' ~ self!node($x[1]) ~ ')'
+                }
+            }
             when $head ~~ Str && %FUNC-MAP{$head}.defined {
                 return %FUNC-MAP{$head} ~ '(' ~ self!node($x[1]) ~ ')';
             }
