@@ -17,9 +17,9 @@ my @simple = (
 );
 
 my @complex = (
-    '\\int_{0}^{1} x^2 d x',
-    '\\sum_{n=1}^{10} n^2',
-    '\\lim_{x\\to0} \\frac{\\sin(x)}{x}',
+    ['\\int_{0}^{1} x^2 d x', 'Integrate[Power[x,2],{x,0,1}]'],
+    ['\\sum_{n=1}^{10} n^2', 'Sum[Power[n,2],{n,1,10}]'],
+    ['\\lim_{x\\to0} \\frac{\\sin(x)}{x}', 'Limit[Times[ Sin[x] , Power[x, -1]],x->0]'],
 );
 
 plan *;
@@ -30,10 +30,9 @@ for @simple -> ($formula, $expected) {
     is $res, $expected, "WL shape for: $formula";
 }
 
-for @complex -> $formula {
+for @complex -> ($formula, $expected) {
     my $res = latex-interpret($formula, actions => 'wl', format => 'raku');
     ok $res.defined, "interprets complex formula: $formula";
-    ok $res.chars > 0, "returns WL text for: $formula";
+    is $res, $expected, "WL shape for: $formula";
 }
-
 done-testing;
