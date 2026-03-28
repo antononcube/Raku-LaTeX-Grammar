@@ -14,6 +14,8 @@ my @simple = (
 );
 
 my @complex =
+    [ '(x + 1) \log_2 x', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mo>&#xD7;</mo><mrow><msub><mi>log</mi><mn>2</mn></msub><mo>(</mo><mi>x</mi><mo>)</mo></mrow></mrow></math>'],
+    [ '\log\left( \frac{x+1}{x-1} \right)',  '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>log</mi><mo>(</mo><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mrow><mi>x</mi><mo>-</mo><mn>1</mn></mrow></mfrac><mo>)</mo></mrow></math>'],
     ['\\int_{0}^{1} x^2 dx', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msubsup><mo>&#x222B;</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mrow><mo>d</mo><mi>x</mi></mrow></mrow></math>'],
     ['\\sum_{n=1}^{10} n^2', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msubsup><mo>&#x2211;</mo><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><mn>10</mn></msubsup><msup><mi>n</mi><mn>2</mn></msup></mrow></math>'],
     ['\\lim_{x\\to0} \\frac{\\sin(x)}{x}', '<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><munder><mi>lim</mi><mrow><mi>x</mi><mo>&#x2192;</mo><mn>0</mn></mrow></munder><mfrac><mrow><mi>sin</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mi>x</mi></mfrac></mrow></math>']
