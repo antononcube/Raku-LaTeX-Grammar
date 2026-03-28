@@ -129,7 +129,7 @@ class LaTeX::Actions::AsciiMath is LaTeX::Actions::MathJSON {
         my $tuple = $x[2];
 
         my ($var, $lower, $upper) = (Any, Any, Any);
-        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Tuple' {
+        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Limits' {
             ($var, $lower, $upper) = ($tuple[1], $tuple[2], $tuple[3]);
         }
 
@@ -147,7 +147,7 @@ class LaTeX::Actions::AsciiMath is LaTeX::Actions::MathJSON {
         my $tuple = $x[2];
 
         my ($var, $start, $limit) = (Any, Any, Any);
-        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Tuple' {
+        if $tuple ~~ Positional && $tuple.elems == 4 && $tuple[0] eq 'Limits' {
             ($var, $start, $limit) = ($tuple[1], $tuple[2], $tuple[3]);
         }
 
