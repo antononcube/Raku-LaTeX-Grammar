@@ -18,6 +18,7 @@ my @simple = (
 );
 
 my @complex = (
+    [ '\log\left( \frac{x+1}{x-1} \right)',  ["Log", ["Divide", ["Add", "x", 1], ["Subtract", "x", 1]]] ],
     [ '\\int x dx',$["Integrate", "x", ["Limits", "x", "Nothing", "Nothing"]] ],
     [ '\\int _{0} ^{1} x^2 dx', ["Integrate", ["Function", ["Block", ["Power", "x", 2]], "x"], ["Limits", "x", 0, 1]] ],
     [ '\\int_{0}^{1} x^2 dx', ["Integrate", ["Function", ["Block", ["Power", "x", 2]], "x"], ["Limits", "x", 0, 1]] ],
