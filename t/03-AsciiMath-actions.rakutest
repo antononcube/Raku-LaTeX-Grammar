@@ -15,9 +15,11 @@ my @simple = (
 );
 
 my @complex = (
-    '\\int_{0}^{1} x^2 d x',
-    '\\sum_{n=1}^{10} n^2',
-    '\\lim_{x\\to0} \\frac{\\sin(x)}{x}',
+    [ '(x + 1) \log_2 x', '(x+1)*log_2(x)'],
+    [ '(x + 1) (n - b)', '(x+1)*(n-b)'],
+    ['\\int_{0}^{1} x^2 d x', 'int_(0)^(1) x^2 dx'],
+    ['\\sum_{n=1}^{10} n^2', 'sum_(n=1)^(10) n^2'],
+    ['\\lim_{x\\to0} \\frac{\\sin(x)}{x}', 'lim_(x->0) sin(x)/x'],
 );
 
 plan *;
@@ -28,10 +30,10 @@ for @simple -> ($formula, $expected) {
     is $res, $expected, "AsciiMath shape for: $formula";
 }
 
-for @complex -> $formula {
+for @complex -> ($formula, $expected) {
     my $res = latex-interpret($formula, actions => 'asciimath', format => 'raku');
     ok $res.defined, "interprets complex formula: $formula";
-    ok $res.chars > 0, "returns AsciiMath text for: $formula";
+    is $res, $expected, "AsciiMath shape for: $formula";
 }
 
 done-testing;
