@@ -15,9 +15,11 @@ my @simple = (
     [ '\\sin(x)', [ 'Sin', 'x' ] ],
     [ '\\sin (x)', [ 'Sin', 'x' ] ],
     [ 'x^2+y_1', [ 'Add', [ 'Power', 'x', 2 ], [ 'Subscript', 'y', 1 ] ] ],
+    [ '\ln x', [ 'Log', 'x'] ],
 );
 
 my @complex = (
+    [ '(x + 1) \log_2 x',  ["Multiply", ["Add", "x", 1], ["Log", "x", 2]] ],
     [ '\log\left( \frac{x+1}{x-1} \right)',  ["Log", ["Divide", ["Add", "x", 1], ["Subtract", "x", 1]]] ],
     [ '\\int x dx',$["Integrate", "x", ["Limits", "x", "Nothing", "Nothing"]] ],
     [ '\\int _{0} ^{1} x^2 dx', ["Integrate", ["Function", ["Block", ["Power", "x", 2]], "x"], ["Limits", "x", 0, 1]] ],
