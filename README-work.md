@@ -85,6 +85,10 @@ See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
 
 **Remark:** In the table above "RakuAST" fields show the "deparsed" RakuAST constructs, i.e., Raku code. 
 
+**Remark:** The MathML code might be rendered incorrectly in GitHub's README. 
+In Jupyter notebooks and specialized Markdown viewers it can be seen that the generated MathML code
+corresponds to the LaTeX code.
+
 Here is a LaTeX translation to RakuAST structure:
 
 ```raku
