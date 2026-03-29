@@ -74,10 +74,9 @@ my @res = do for @formulas -> $fm {
 
 @res 
 ==> { .&to-long-format(id-columns => 'LaTeX', variables-to => 'Format', values-to => 'Translation') }()
-==> { group-by($_, 'LaTeX').map({ $_.value.sort(*<LaTeX Format>).kv.map(-> $i, %r { %r<LaTeX> ='' if $i; %r }) }) }()
-==> { $_.flat(1) }()
-==> to-html(field-names => <LaTeX Format Translation>, align => 'left')
-==> { .subst(/ 'latex«' (.*?) '»' /, { latex-interpret($0.Str, actions => 'MathML')}, :g) }()
+==> { group-by($_, 'LaTeX')}()
+==> { $_.map({ %(LaTeX => $_.key, Translations => to-html($_.value.sort(*<Format>), field-names => <Format Translation>, align => 'left').subst(/'<thead>' .*? '</thead>'/, :g) ) }) }()
+==> { .&to-html(field-names => <LaTeX Translations>) }()
 ```
 
 See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
