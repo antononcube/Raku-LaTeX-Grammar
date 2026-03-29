@@ -61,14 +61,14 @@ my @formulas = (
 '\\log_{5} x',
 '\log\left( \frac{x+1}{x-1} \right)'
 );
-my @targets = <AsciiMath WL MathJSON>;
+my @targets = <AsciiMath WL MathML>;
 
 my @res = do for @formulas -> $fm {
     [
      LaTeX => $fm, 
-     MathML => "latex«$fm»",
      RakuAST => latex-interpret($fm, actions => 'RakuAST').DEPARSE,
-     |@targets.map({ $_ => latex-interpret($fm, actions => $_).raku })
+     MathJSON => latex-interpret($fm, actions => 'MathJSON').raku,
+     |@targets.map({ $_ => latex-interpret($fm, actions => $_) })
     ].Hash
 }
 
@@ -78,7 +78,6 @@ my @res = do for @formulas -> $fm {
 ==> { $_.flat(1) }()
 ==> to-html(field-names => <LaTeX Format Translation>, align => 'left')
 ==> { .subst(/ 'latex«' (.*?) '»' /, { latex-interpret($0.Str, actions => 'MathML')}, :g) }()
-==> { .subst(/ '"' | '&quot;' /, :g).subst('\{', '{', :g) }()
 ```
 
 See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
