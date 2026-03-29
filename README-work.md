@@ -64,7 +64,12 @@ my @formulas = (
 my @targets = <AsciiMath WL MathJSON>;
 
 my @res = do for @formulas -> $fm {
-    [LaTeX => $fm, MathML => "latex«$fm»", |@targets.map({ $_ => latex-interpret($fm, actions => $_).raku })].Hash
+    [
+     LaTeX => $fm, 
+     MathML => "latex«$fm»",
+     RakuAST => latex-interpret($fm, actions => 'RakuAST').DEPARSE,
+     |@targets.map({ $_ => latex-interpret($fm, actions => $_).raku })
+    ].Hash
 }
 
 @res 
@@ -78,10 +83,12 @@ my @res = do for @formulas -> $fm {
 
 See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
 
-Translating LaTeX to RakuAST:
+**Remark:** In the table above "RakuAST" fields show the "deparsed" RakuAST constructs, i.e., Raku code. 
+
+Here is a LaTeX translation to RakuAST structure:
 
 ```raku
-latex-interpret('\sum_{n=1}^{10} n^2', actions => 'RakuAST').DEPARSE
+latex-interpret('\sin(x + 2)', actions => 'RakuAST')
 ```
 
 

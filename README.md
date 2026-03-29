@@ -67,7 +67,12 @@ my @formulas = (
 my @targets = <AsciiMath WL MathJSON>;
 
 my @res = do for @formulas -> $fm {
-    [LaTeX => $fm, MathML => "latex«$fm»", |@targets.map({ $_ => latex-interpret($fm, actions => $_).raku })].Hash
+    [
+     LaTeX => $fm, 
+     MathML => "latex«$fm»",
+     RakuAST => latex-interpret($fm, actions => 'RakuAST').DEPARSE,
+     |@targets.map({ $_ => latex-interpret($fm, actions => $_).raku })
+    ].Hash
 }
 
 @res 
@@ -78,18 +83,45 @@ my @res = do for @formulas -> $fm {
 ==> { .subst(/ 'latex«' (.*?) '»' /, { latex-interpret($0.Str, actions => 'MathML')}, :g) }()
 ==> { .subst(/ '"' | '&quot;' /, :g).subst('\{', '{', :g) }()
 ```
-<table border=1><thead><tr><th>LaTeX</th><th>Format</th><th>Translation</th></tr></thead><tbody><tr><td align=left>\sqrt{4 * x^2 + 12 * x + 9}</td><td align=left>AsciiMath</td><td align=left>sqrt((4*x^2+12*x)+9)</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Root, [Add, [Add, [Multiply, 4, [Power, x, 2]], [Multiply, 12, x]], 9], 2]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><msqrt><mrow><mrow><mrow><mn>4</mn><mo>&#xD7;</mo><msup><mi>x</mi><mn>2</mn></msup></mrow><mo>+</mo><mrow><mn>12</mn><mo>&#xD7;</mo><mi>x</mi></mrow></mrow><mo>+</mo><mn>9</mn></mrow></msqrt></math></td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Sqrt[Plus[Plus[Times[4,Power[x,2]],Times[12,x]],9]]</td></tr><tr><td align=left>\log\left( \frac{x+1}{x-1} \right)</td><td align=left>AsciiMath</td><td align=left>log((x+1)/(x-1))</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Log, [Divide, [Add, x, 1], [Subtract, x, 1]]]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><mi>log</mi><mo>(</mo><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mrow><mi>x</mi><mo>-</mo><mn>1</mn></mrow></mfrac><mo>)</mo></mrow></math></td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Log[Rational[Plus[x,1],Plus[x,Times[-1,1]]]]</td></tr><tr><td align=left>\sum_{n=1}^{10} n^2</td><td align=left>AsciiMath</td><td align=left>sum_(n=1)^(10) n^2</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Sum, [Power, n, 2], [Limits, n, 1, 10]]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><msubsup><mo>&#x2211;</mo><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><mn>10</mn></msubsup><msup><mi>n</mi><mn>2</mn></msup></mrow></math></td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Sum[Power[n,2],{n,1,10}]</td></tr><tr><td align=left>\int_{0}^{1} x^{2} d x</td><td align=left>AsciiMath</td><td align=left>int_(0)^(1) x^2 dx</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Integrate, [Function, [Block, [Power, x, 2]], x], [Limits, x, 0, 1]]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><msubsup><mo>&#x222B;</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mrow><mo>d</mo><mi>x</mi></mrow></mrow></math></td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Integrate[Power[x,2],{x,0,1}]</td></tr><tr><td align=left>\log_{5} x</td><td align=left>AsciiMath</td><td align=left>log_5(x)</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Log, x, 5]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><msub><mi>log</mi><mn>5</mn></msub><mo>(</mo><mi>x</mi><mo>)</mo></mrow></math></td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Log[5,x]</td></tr><tr><td align=left>\frac{-1214}{117}</td><td align=left>AsciiMath</td><td align=left>-1214/117</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Rational, -1214, 117]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mfrac><mn>-1214</mn><mn>117</mn></mfrac></math></td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Rational[-1214,117]</td></tr><tr><td align=left>\lim_{x\to0} \frac{\sin(x)}{x}</td><td align=left>AsciiMath</td><td align=left>lim_(x-&gt;0) sin(x)/x</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Limit, [Function, [Block, [Divide, [Sin, x], x]], x], 0]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><munder><mi>lim</mi><mrow><mi>x</mi><mo>&#x2192;</mo><mn>0</mn></mrow></munder><mfrac><mrow><mi>sin</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mi>x</mi></mfrac></mrow></math></td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Limit[Times[ Sin[x] , Power[x, -1]],x-&gt;0]</td></tr></tbody></table>
+<table border=1><thead><tr><th>LaTeX</th><th>Format</th><th>Translation</th></tr></thead><tbody><tr><td align=left>\log_{5} x</td><td align=left>AsciiMath</td><td align=left>log_5(x)</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Log, x, 5]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><msub><mi>log</mi><mn>5</mn></msub><mo>(</mo><mi>x</mi><mo>)</mo></mrow></math></td></tr><tr><td align=left></td><td align=left>RakuAST</td><td align=left>log(x)</td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Log[5,x]</td></tr><tr><td align=left>\sqrt{4 * x^2 + 12 * x + 9}</td><td align=left>AsciiMath</td><td align=left>sqrt((4*x^2+12*x)+9)</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Root, [Add, [Add, [Multiply, 4, [Power, x, 2]], [Multiply, 12, x]], 9], 2]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><msqrt><mrow><mrow><mrow><mn>4</mn><mo>&#xD7;</mo><msup><mi>x</mi><mn>2</mn></msup></mrow><mo>+</mo><mrow><mn>12</mn><mo>&#xD7;</mo><mi>x</mi></mrow></mrow><mo>+</mo><mn>9</mn></mrow></msqrt></math></td></tr><tr><td align=left></td><td align=left>RakuAST</td><td align=left>sqrt((((4 * (x ** 2)) + (12 * x)) + 9))</td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Sqrt[Plus[Plus[Times[4,Power[x,2]],Times[12,x]],9]]</td></tr><tr><td align=left>\log\left( \frac{x+1}{x-1} \right)</td><td align=left>AsciiMath</td><td align=left>log((x+1)/(x-1))</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Log, [Divide, [Add, x, 1], [Subtract, x, 1]]]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><mi>log</mi><mo>(</mo><mfrac><mrow><mi>x</mi><mo>+</mo><mn>1</mn></mrow><mrow><mi>x</mi><mo>-</mo><mn>1</mn></mrow></mfrac><mo>)</mo></mrow></math></td></tr><tr><td align=left></td><td align=left>RakuAST</td><td align=left>log(((x + 1) / (x - 1)))</td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Log[Rational[Plus[x,1],Plus[x,Times[-1,1]]]]</td></tr><tr><td align=left>\frac{-1214}{117}</td><td align=left>AsciiMath</td><td align=left>-1214/117</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Rational, -1214, 117]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mfrac><mn>-1214</mn><mn>117</mn></mfrac></math></td></tr><tr><td align=left></td><td align=left>RakuAST</td><td align=left>(-1214 / 117)</td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Rational[-1214,117]</td></tr><tr><td align=left>\lim_{x\to0} \frac{\sin(x)}{x}</td><td align=left>AsciiMath</td><td align=left>lim_(x-&gt;0) sin(x)/x</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Limit, [Function, [Block, [Divide, [Sin, x], x]], x], 0]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><munder><mi>lim</mi><mrow><mi>x</mi><mo>&#x2192;</mo><mn>0</mn></mrow></munder><mfrac><mrow><mi>sin</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mi>x</mi></mfrac></mrow></math></td></tr><tr><td align=left></td><td align=left>RakuAST</td><td align=left>limit((sin(x) / x), x, 0, TwoSided)</td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Limit[Times[ Sin[x] , Power[x, -1]],x-&gt;0]</td></tr><tr><td align=left>\int_{0}^{1} x^{2} d x</td><td align=left>AsciiMath</td><td align=left>int_(0)^(1) x^2 dx</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Integrate, [Function, [Block, [Power, x, 2]], x], [Limits, x, 0, 1]]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><msubsup><mo>&#x222B;</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mrow><mo>d</mo><mi>x</mi></mrow></mrow></math></td></tr><tr><td align=left></td><td align=left>RakuAST</td><td align=left>integral((x ** 2), x, 0, 1)</td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Integrate[Power[x,2],{x,0,1}]</td></tr><tr><td align=left>\sum_{n=1}^{10} n^2</td><td align=left>AsciiMath</td><td align=left>sum_(n=1)^(10) n^2</td></tr><tr><td align=left></td><td align=left>MathJSON</td><td align=left>$[Sum, [Power, n, 2], [Limits, n, 1, 10]]</td></tr><tr><td align=left></td><td align=left>MathML</td><td align=left><math xmlns=http://www.w3.org/1998/Math/MathML><mrow><msubsup><mo>&#x2211;</mo><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><mn>10</mn></msubsup><msup><mi>n</mi><mn>2</mn></msup></mrow></math></td></tr><tr><td align=left></td><td align=left>RakuAST</td><td align=left>[+] (1 .. 10).map(-&gt; $n! { ($n ** 2) })</td></tr><tr><td align=left></td><td align=left>WL</td><td align=left>Sum[Power[n,2],{n,1,10}]</td></tr></tbody></table>
 
 
 See also the Jupyter notebook ["Basic-usage.ipynb"](./docs/Basic-usage.ipynb).
 
-Translating LaTeX to RakuAST:
+**Remark:** In the table above "RakuAST" fields show the "deparsed" RakuAST constructs, i.e., Raku code. 
+
+Here is a LaTeX translation to RakuAST structure:
 
 ```raku
-latex-interpret('\sum_{n=1}^{10} n^2', actions => 'RakuAST').DEPARSE
+latex-interpret('\sin(x + 2)', actions => 'RakuAST')
 ```
 ```
-# [+] (1 .. 10).map(-> $n! { ($n ** 2) })
+# RakuAST::Call::Name.new(
+#   name => RakuAST::Name.from-identifier("sin"),
+#   args => RakuAST::ArgList.new(
+#     RakuAST::Circumfix::Parentheses.new(
+#       RakuAST::SemiList.new(
+#         RakuAST::Statement::Expression.new(
+#           expression => RakuAST::ApplyInfix.new(
+#             left  => RakuAST::Term::Name.new(
+#               RakuAST::Name.new(
+#                 RakuAST::Name::Part::Expression.new(
+#                   RakuAST::QuotedString.new(
+#                     segments   => (
+#                       RakuAST::StrLiteral.new("x"),
+#                     )
+#                   )
+#                 )
+#               )
+#             ),
+#             infix => RakuAST::Infix.new("+"),
+#             right => RakuAST::IntLiteral.new(2)
+#           )
+#         )
+#       )
+#     )
+#   )
+# )
 ```
 
 
